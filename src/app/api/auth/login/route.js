@@ -8,6 +8,7 @@ import dbConnect from "@/lib/dbConnect";
 dbConnect();
 console.log("Connected to MongoDB");
 
+// POST /api/auth/login
 export async function POST(request) {
     try {
         const body = await request.json();

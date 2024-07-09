@@ -3,12 +3,12 @@ import bcrypt from "bcrypt";
 import { User } from "@/models/User.model";
 import { generateTokenAndSetCookies } from "@/utils/utils";
 import dbConnect from "@/lib/dbConnect";
-import dotenv from 'dotenv';
-dotenv.config();
 
 dbConnect();
 console.log("Connected to MongoDB");
 
+
+// POST /api/auth/register
 export async function POST(request) {
     try {
         const body = await request.json();
