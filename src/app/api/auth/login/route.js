@@ -1,8 +1,12 @@
-import User from "@/models/User.model";
+import {User} from "@/models/User.model";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt"
 import { generateTokenAndSetCookies } from "@/utils/utils";
+import dbConnect from "@/lib/dbConnect";
 
+
+dbConnect();
+console.log("Connected to MongoDB");
 
 export async function POST(request) {
     try {

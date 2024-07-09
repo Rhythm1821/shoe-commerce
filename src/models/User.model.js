@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
     isSeller: {type: Boolean, default: false},
 }, {timestamps: true})
 
-const User = mongoose.model("User", userSchema)
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+
 
 const sellerSchema = new mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
@@ -15,6 +16,7 @@ const sellerSchema = new mongoose.Schema({
     contactInfo: {type: String, required: true}
 }, {timestamps: true})
 
-const Seller = mongoose.model("Seller", sellerSchema)
+const Seller = mongoose.models.Seller || mongoose.model("Seller", sellerSchema)
 
-export default {User, Seller}
+export {User, Seller}
+
