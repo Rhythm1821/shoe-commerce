@@ -4,16 +4,19 @@ const userSchema = new mongoose.Schema({
     username: {type: String, required: true},
     email: {type: String, required: true},
     password: {type: String, required: true},
-    isSeller: {type: Boolean, default: false},
+    refreshToken: {type: String},
 }, {timestamps: true})
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 
 const sellerSchema = new mongoose.Schema({
-    user: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
+    username: {type: String, required: true},
+    email: {type: String, required: true},
+    password: {type: String, required: true},
     companyName: {type: String, required: true},
-    contactInfo: {type: String, required: true}
+    contactInfo: {type: String, required: true},
+    refreshToken: {type: String}
 }, {timestamps: true})
 
 const Seller = mongoose.models.Seller || mongoose.model("Seller", sellerSchema)
