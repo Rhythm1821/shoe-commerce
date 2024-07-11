@@ -46,7 +46,6 @@ export async function POST(request) {
     }
 
     const FormData = await request.formData();
-    // console.log("shoeImages", FormData.get('shoeImages'));
     
     const name = FormData.get('name')
     const description = FormData.get('description')
@@ -58,14 +57,33 @@ export async function POST(request) {
     const category = FormData.get('category')
     const stockQuantity = Number(FormData.get('stockQuantity'))
 
-    const ImageData = FormData.getAll('shoeImages')[0]
+    const ImageData = FormData.getAll('shoeImages')
     console.log("ImageData", ImageData);
-    const filePath = `./public/${ImageData.name}`;
-    await pump(ImageData.stream(), fs.createWriteStream(filePath));
-    const shoeImages = `http://localhost:3000/${ImageData.name}`
+
+    const shoeImages = []
+    async function saveImages() {
+        // check if brand dir exists
+        const brandDir = `./public/${brand}`;
+        if (!fs.existsSync(brandDir)) {
+            fs.mkdirSync(brandDir);
+        }
+    
+        for (const Image of ImageData) {
+            const filePath = `./public/${brand}/${Image.name}`;
+            try {
+                await pump(Image.stream(), fs.createWriteStream(filePath));
+                shoeImages.push(`http://localhost:3000/${Image.name}`);
+                console.log(`File ${Image.name} saved successfully to ${filePath}`);
+            } catch (error) {
+                console.error(`Error saving ${Image.name}:`, error);
+            }
+        }
+        }
+    
+    await saveImages();
     
 
-    if (!name || !description || !brand || !material || !color || !sizes || !price || !category || !stockQuantity || !shoeImages) {
+    if (!name || !description || !brand || !material || !color || !sizes || !price || !category || !stockQuantity || shoeImages.length<1) {
         return NextResponse.json({message: "Missing required fields"}, { status: 400 });
     }
 
@@ -78,7 +96,6 @@ export async function POST(request) {
         sizes,
         price,
         category,
-        // tags,
         stockQuantity,
         shoeImages
     })
