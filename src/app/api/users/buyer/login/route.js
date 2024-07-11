@@ -8,7 +8,7 @@ import dbConnect from "@/lib/dbConnect";
 dbConnect();
 console.log("Connected to MongoDB");
 
-// POST /api/auth/login
+// POST /api/users/login
 export async function POST(request) {
     try {
         const body = await request.json();    
@@ -43,7 +43,6 @@ export async function POST(request) {
 
         response.cookies.set("accessToken", accessToken, { httpOnly: true });
         response.cookies.set("refreshToken", refreshToken, { httpOnly: true });
-
         
         return response
     } catch (error) {

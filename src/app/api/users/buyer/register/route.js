@@ -8,7 +8,7 @@ dbConnect();
 console.log("Connected to MongoDB");
 
 
-// POST /api/auth/register
+// POST /api/users/register
 export async function POST(request) {
     try {
         const body = await request.json();

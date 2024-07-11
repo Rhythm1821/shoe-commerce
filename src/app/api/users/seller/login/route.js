@@ -44,7 +44,6 @@ export async function POST(request) {
 
         response.cookies.set("accessToken", accessToken, { httpOnly: true });
         response.cookies.set("refreshToken", refreshToken, { httpOnly: true });
-
         
         return response
     
