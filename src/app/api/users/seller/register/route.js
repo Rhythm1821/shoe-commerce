@@ -30,6 +30,12 @@ export async function POST(request) {
         return NextResponse.json({message: "Email already exists"}, { status: 409 });
     }
 
+    const existingCompany = await Seller.findOne({companyName})
+
+    if (existingCompany) {
+        return NextResponse.json({message: "Company name already exists, try a different one"}, { status: 409 });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newSeller = new Seller({
@@ -42,10 +48,6 @@ export async function POST(request) {
 
     await newSeller.save()
 
-    // login user
-    // const response = await generateAccessAndRefreshTokenAndSetCookies(newSeller, 201, "Seller Registered successfully");
-
-    // better scenario
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(newSeller)
 
     newSeller.refreshToken = refreshToken;
