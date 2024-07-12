@@ -107,22 +107,3 @@ export async function POST(request) {
     return NextResponse.json({message: "Product added successfully"}, { status: 201 });
 }
 
-// api/product (PUT)
-export async function PUT(request) {
-    const isAuthenticated = sellerAuth(request);
-
-    if (!isAuthenticated) {
-        return NextResponse.json({message: "Unauthorized"}, { status: 401 })
-    }
-    return NextResponse.json({message: "Product updated successfully"}, { status: 200 });
-}
-
-// api/product (DELETE)
-export async function DELETE(request) {
-    const isAuthenticated = sellerAuth(request);
-
-    if (!isAuthenticated) {
-        return NextResponse.json({message: "Unauthorized"}, { status: 401 })
-    }
-    return NextResponse.json({message: "Product deleted successfully"}, { status: 204 });
-}
