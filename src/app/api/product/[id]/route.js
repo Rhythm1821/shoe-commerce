@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import fs from 'fs';
 import { pipeline } from 'stream';
 import { promisify } from 'util';
+import { Seller } from "@/models/User.model";
 const pump = promisify(pipeline);
 
 dbConnect();
@@ -21,6 +22,7 @@ export async function GET(request,context) {
     return NextResponse.json({product}, { status: 200 });
 }
 
+// api/product/:id (PUT)
 export async function PUT(request,context) {
     const isAuthenticated = await sellerAuth(request);
 
@@ -29,6 +31,14 @@ export async function PUT(request,context) {
     }
 
     const { id } = context.params;
+
+    const curProduct = await Product.findById(id);
+    const seller = await Seller.findById(curProduct.seller);
+    const curSeller = await Seller.findById(request.user._id);
+
+    if (seller._id.toString() !== curSeller._id.toString()) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
     // Parse the form data
     const formData = await request.formData();
@@ -99,54 +109,39 @@ export async function PUT(request,context) {
     return NextResponse.json({ message: "Product updated successfully", product }, { status: 200 });
 }
 
-// api/product/:id (PUT)
-// export async function PUT(request) {
-//     const isAuthenticated = await sellerAuth(request);
-
-//     if (!isAuthenticated) {
-//         return NextResponse.json({message: "Unauthorized"}, { status: 401 })
-//     }
-
-//     const { id } = request.params;
-//     const FormData = await request.formData();
-//     const name = FormData.get('name')
-//     const description = FormData.get('description')
-//     const brand = FormData.get('brand')
-//     const material = FormData.get('material')
-//     const color = FormData.get('color')
-//     const sizes =  JSON.parse(FormData.get('sizes'))
-//     const price = Number(FormData.get('price'))
-//     const category = FormData.get('category')
-//     const stockQuantity = Number(FormData.get('stockQuantity'))
-
-//     const ImageData = FormData.getAll('shoeImages')
-//     const shoeImages = []
-//     for (let i = 0; i < ImageData.length; i++) {
-//         shoeImages.push(ImageData[i].value)
-//     }
-
-//     const product = await Product.findByIdAndUpdate(id, {
-//         name,
-//         description,
-//         brand,
-//         material,
-//         color,
-//         sizes,
-//         price,
-//         category,
-//         stockQuantity,
-//         shoeImages
-//     }, {new: true});
-    
-//     return NextResponse.json({message: "Product updated successfully"}, { status: 200, product });
-// }
 
 // api/product/:id (DELETE)
-export async function DELETE(request) {
+export async function DELETE(request,context) {
     const isAuthenticated =  await sellerAuth(request);
 
     if (!isAuthenticated) {
         return NextResponse.json({message: "Unauthorized"}, { status: 401 })
     }
-    return NextResponse.json({message: "Product deleted successfully"}, { status: 204 });
+
+    const { id } = context.params;
+
+    const curProduct = await Product.findById(id);
+    console.log(curProduct);
+    const seller = await Seller.findById(curProduct.seller);
+    const curSeller = await Seller.findById(request.user._id);
+
+    if (seller._id.toString() !== curSeller._id.toString()) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    await curProduct.deleteOne();
+
+    if (!curProduct) {
+        return NextResponse.json({message: "Product not found"}, { status: 404 });
+    }
+
+    // delete images
+    const brand = curProduct.brand
+    const brandDir = `./public/${brand}`;
+    if (fs.existsSync(brandDir)) {
+        fs.rmSync(brandDir, { recursive: true });
+    }
+
+
+    return NextResponse.json({message: "Product deleted successfully"}, { status: 200 });
 }
