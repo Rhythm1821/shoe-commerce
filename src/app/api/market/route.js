@@ -9,7 +9,7 @@ dbConnect();
 export async function GET(request){
     try {
         // Get all products
-        const products = await Product.find().select('-createdAt -updatedAt -__v -seller -stockQuantity -ratings' );
+        const products = await Product.find().select('-createdAt -updatedAt -__v -seller -ratings' );
     
         return NextResponse.json({products}, { status: 200 })
     } catch (error) {

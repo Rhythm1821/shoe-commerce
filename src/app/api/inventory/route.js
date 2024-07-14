@@ -12,7 +12,7 @@ const pump = promisify(pipeline);
 dbConnect()
 
 
-// api/product (GET)
+// api/inventory (GET)
 export async function GET(request) {
     const isAuthenticated = await sellerAuth(request);
 
@@ -31,7 +31,7 @@ export async function GET(request) {
     return NextResponse.json({products}, { status: 200 });
 }
 
-// api/product (POST)
+// api/inventory (POST)
 export async function POST(request) {
     const isAuthenticated = await sellerAuth(request);
 
