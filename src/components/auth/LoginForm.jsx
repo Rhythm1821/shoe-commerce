@@ -5,10 +5,8 @@ import React, { useState } from 'react';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
-    password: '',
-    confirmPassword: ''
+    password: ''
   });
 
   const handleChange = (e) => {
@@ -19,9 +17,25 @@ const LoginForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+    const { email, password } = formData;
+    const response = await fetch('/api/users/buyer/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('Login successful');
+      return data;
+    } else {
+      console.error('Login failed');
+    }
     console.log(formData);
   };
 
@@ -59,7 +73,7 @@ const LoginForm = () => {
         />
       </div>
 
-      <Button type="submit" className="w-full py-2 bg-blue-500 text-white rounded">
+      <Button type="submit" className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
         Login
       </Button>
     </form>
