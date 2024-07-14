@@ -7,15 +7,9 @@ dbConnect();
 
 // api/market (GET)
 export async function GET(request){
-    const isAuthenticated = buyerAuth(request)
-
-    if (!isAuthenticated) {
-        return NextResponse.json({message: "Unauthorized"}, { status: 401 })
-    }
-
     try {
         // Get all products
-        const products = await Product.find().select('-_id -createdAt -updatedAt -__v -seller -stockQuantity -ratings' );
+        const products = await Product.find().select('-createdAt -updatedAt -__v -seller -stockQuantity -ratings' );
     
         return NextResponse.json({products}, { status: 200 })
     } catch (error) {
