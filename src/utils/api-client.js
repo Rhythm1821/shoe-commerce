@@ -41,6 +41,18 @@ export async function postRegisterDetails(data, type) {
     }
 }
 
+export async function postLoginDetails(data, type) {
+    const response = await fetch(`${API_BASE_URL}/api/users/${type}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+      });
+
+    return response
+}
+
 // secured fetching
 export async function fetchCart() {
     try {
