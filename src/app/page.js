@@ -1,9 +1,13 @@
-import Image from "next/image";
+'use client'
+import GetAllProducts from "@/components/GetAllProducts";
+
 
 export default function Home() {
+  
+  
   return (
     <main>
-      Home Page
+      <GetAllProducts />
     </main>
   );
 }
