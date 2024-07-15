@@ -1,42 +1,31 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { postLoginDetails } from '@/utils/api-client';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-const LoginForm = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+const LoginForm = ({type}) => {
+  const router = useRouter()
+  const [formData, setFormData] = useState({email: '',password: ''});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    setFormData({...formData,[name]: value});
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { email, password } = formData;
-    const response = await fetch('/api/users/buyer/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    });
+    const response = await postLoginDetails(formData, type);
+    const message = await response.json();
 
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log('Login successful');
-      return data;
+    if (response.status === 200) {
+      console.log(message);
+      router.push('/')
+      return message;
     } else {
-      console.error('Login failed');
+      console.error(message);
     }
-    console.log(formData);
   };
 
   return (

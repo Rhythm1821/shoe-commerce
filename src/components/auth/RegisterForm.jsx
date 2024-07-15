@@ -1,28 +1,31 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { postRegisterDetails } from '@/utils/api-client';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-const RegisterForm = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
+const RegisterForm = ({ type }) => {
+  const router = useRouter()
+  const [formData, setFormData] = useState({username: '',email: '',password: '',confirmPassword: '', companyName: '', contactInfo: ''});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    setFormData({...formData,[name]: value});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log(formData);
+    console.log("formData", formData);
+    const res = await postRegisterDetails(formData, type)
+    const { message } = await res.json();
+    if (res.status === 201) {
+      console.log(message);
+      router.push('/')
+      return message
+    } else {
+      console.error(message);
+    }
   };
 
   return (
@@ -42,6 +45,42 @@ const RegisterForm = () => {
           required
         />
       </div>
+
+      {
+        type === 'seller' && (
+          <>
+            <div className="mb-4">
+              <Label htmlFor="companyName" className="block mb-1">
+                Company Name
+              </Label>
+              <Input
+                type="text"
+                name="companyName"
+                id="companyName"
+                value={formData.companyName}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <Label htmlFor="contactInfo" className="block mb-1">
+                Contact Info
+              </Label>
+              <Input
+                type="text"
+                name="contactInfo"
+                id="contactInfo"
+                value={formData.contactInfo}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded"
+                required
+              />
+            </div>
+          </>
+        )
+      }
 
       <div className="mb-4">
         <Label htmlFor="email" className="block mb-1">
@@ -88,7 +127,7 @@ const RegisterForm = () => {
         />
       </div>
 
-      <Button type="submit" className="w-full py-2 bg-blue-500 text-white rounded">
+      <Button type="submit" className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
         Register
       </Button>
     </form>
