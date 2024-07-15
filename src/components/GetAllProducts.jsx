@@ -1,5 +1,5 @@
 "use client"
-import { getProducts } from "@/utils/api-client";
+import { fetchProducts } from "@/utils/api-client";
 import { useEffect, useState } from "react";
 
 export default function GetAllProducts() {
@@ -7,16 +7,15 @@ export default function GetAllProducts() {
 
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            const products = await getProducts();
+        const getProducts = async () => {
+            const products = await fetchProducts();
             setAllProducts(products);
         };
-        fetchProducts();
+        getProducts();
     }, []);
 
     return (
         <div className="p-6 bg-slate-950 text-yellow-100 rounded shadow-md text-center">
-            <h2 className="text-2xl items-center">GetAllProducts</h2>
             <div>
                 {
                     allProducts.length > 0 ? (
