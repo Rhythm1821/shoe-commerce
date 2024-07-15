@@ -39,7 +39,3 @@ export async function sellerAuth(req) {
         }
     }
 }
-
-export const config = {
-    matcher: ['/api/products/:path*'],
-}
