@@ -8,7 +8,7 @@ import dbConnect from "@/lib/dbConnect";
 dbConnect();
 console.log("Connected to MongoDB");
 
-// POST /api/users/login
+// POST /api/users/buyer/login
 export async function POST(request) {
     try {
         const body = await request.json();    
@@ -36,10 +36,7 @@ export async function POST(request) {
         await user.save({ validateBeforeSave: false });
 
         // Set cookies
-        const response = NextResponse.json({
-            message: "Login successful",
-            success: true,
-        }, { status: 200 });
+        const response = NextResponse.json({message: "Login successful"}, { status: 200 });
 
         response.cookies.set("accessToken", accessToken, { httpOnly: true });
         response.cookies.set("refreshToken", refreshToken, { httpOnly: true });

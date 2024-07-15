@@ -46,14 +46,10 @@ export async function POST(request) {
         await newUser.save({ validateBeforeSave: false });
 
         // Set cookies
-        const response = NextResponse.json({
-            message: "Registered successfully",
-            success: true,
-        }, { status: 201 });
+        const response = NextResponse.json({message: "Registered successfully"}, { status: 201 });
 
         response.cookies.set("accessToken", accessToken, { httpOnly: true });
         response.cookies.set("refreshToken", refreshToken, { httpOnly: true });
-
         
         return response
     }
