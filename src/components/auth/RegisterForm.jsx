@@ -130,6 +130,7 @@ const RegisterForm = ({ type }) => {
       <Button type="submit" className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
         Register
       </Button>
+      <h6 className="text-center mt-4 text-sm text-blue-600 hover:text-blue-900">Already have an account? <a href={`/${type==='buyer' ? 'login' : 'seller'}`}>Login here</a></h6>
     </form>
   );
 };
