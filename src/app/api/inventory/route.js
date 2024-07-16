@@ -2,7 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import { Product } from "@/models/Product.model";
 import { Seller } from "@/models/User.model";
 import { NextResponse } from "next/server";
-import { sellerAuth } from "@/middlewares/auth";
+import { sellerAuth } from "@/utils/auth";
 
 import fs from 'fs';
 import { pipeline } from 'stream';

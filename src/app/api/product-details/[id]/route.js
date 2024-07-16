@@ -1,4 +1,4 @@
-import { buyerAuth } from "@/middlewares/auth";
+import { buyerAuth } from "@/utils/auth";
 import { Product } from "@/models/Product.model";
 import { NextResponse } from "next/server";
 

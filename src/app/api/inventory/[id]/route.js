@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import { sellerAuth } from "@/middlewares/auth";
+import { sellerAuth } from "@/utils/auth";
 import { Product } from "@/models/Product.model";
 import { NextResponse } from "next/server";
 import fs from 'fs';

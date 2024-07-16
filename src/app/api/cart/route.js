@@ -1,6 +1,6 @@
-import { buyerAuth } from "@/middlewares/auth";
 import { Cart } from "@/models/Cart.model";
 import { Product } from "@/models/Product.model";
+import { buyerAuth } from "@/utils/auth";
 import { NextResponse } from "next/server";
 
 // api/cart (GET)
