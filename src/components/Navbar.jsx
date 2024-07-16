@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 const Navbar = ({ isAuthenticated }) => {
+    console.log("isAuthenticated", isAuthenticated);
     return (
         <nav className="bg-gray-900 text-white p-4 sticky top-0">
             <div className="container mx-auto flex items-center">

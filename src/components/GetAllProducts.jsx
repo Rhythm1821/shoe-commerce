@@ -15,7 +15,7 @@ export default function GetAllProducts() {
     }, []);
 
     return (
-        <div className="p-6 bg-slate-950 text-yellow-100 rounded shadow-md text-center">
+        <div className="p-6 text-yellow-100 rounded shadow-md text-center">
             <div>
                 {
                     allProducts.length > 0 ? (
