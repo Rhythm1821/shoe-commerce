@@ -94,6 +94,8 @@ export async function fetchLogout() {
     }
 }
 
+
+// Seller
 export async function fetchInventory(){
     const res = await fetch(`${API_BASE_URL}/api/inventory`, {
         method: "GET",
@@ -106,3 +108,4 @@ export async function fetchInventory(){
     const data = await res.json();
     return data
 }
+
