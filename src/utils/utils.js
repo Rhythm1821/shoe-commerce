@@ -28,5 +28,20 @@ async function generateAccessAndRefreshToken(user) {
     }
 }
 
+async function generateAccessToken(user) {
+    try {
+        // Generate access token
+        const accessToken = jwt.sign(
+            { _id: user._id, username: user.username, email: user.email },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: process.env.ACCESS_TOKEN_EXPIRY } // Example: short-lived access token (15 minutes)
+        );
+        return {accessToken}
+    } catch (error) {
+        console.error("Error generating tokens and setting cookies:", error);
+        return NextResponse.json({ message: "Internal server error", success: false }, { status: 500 });
+    }
+}
 
-export { generateAccessAndRefreshToken };
+
+export { generateAccessAndRefreshToken, generateAccessToken };k
