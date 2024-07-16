@@ -56,20 +56,25 @@ export async function postLoginDetails(data, type) {
 // secured fetching
 export async function fetchCart() {
     try {
-        const res = await fetch(`${API_BASE_URL}/api/cart`, 
-        {
+        const res = await fetch(`${API_BASE_URL}/api/cart`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
             credentials: "include",
         });
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
         const data = await res.json();
-        return data.cart
+        return data;
     } catch (error) {
         console.log("Failed to fetch cart", error);
     }
 }
+
 
 export async function fetchLogout() {
     try {
