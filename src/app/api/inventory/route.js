@@ -26,9 +26,9 @@ export async function GET(request) {
         return NextResponse.json({message: "You must be a seller"}, { status: 404 });
     }
 
-    const products = await Product.find({seller: request.user._id});
+    const inventory = await Product.find({seller: request.user._id});
 
-    return NextResponse.json({products}, { status: 200 });
+    return NextResponse.json({inventory}, { status: 200 });
 }
 
 // api/inventory (POST)
