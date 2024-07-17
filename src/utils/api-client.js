@@ -109,3 +109,16 @@ export async function fetchInventory(){
     return data
 }
 
+export async function addToInventory(data) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, {
+            method: "POST",
+            credentials: "include",
+            body: data
+        })
+    
+        return res
+    } catch (error) {
+        console.log("Error while adding product to inventory", error);
+    }
+}
