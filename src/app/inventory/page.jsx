@@ -9,16 +9,7 @@ export default function Inventory() {
     const [images, setImages] = useState([]);
     const [category, setCategory] = useState("")
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setInventoryData({...inventoryData,[name]: value});
-    };
-
-    useEffect(()=>{
-        fetchInventory()
-            .then((res)=>{setInventory(res.inventory)})
-            .catch((err)=>console.log(err))
-    },[])
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,10 +21,12 @@ export default function Inventory() {
         formData.append("material", inventoryData.material);
         formData.append("color", inventoryData.color);
         formData.append("sizes", inventoryData.sizes);
-        console.log("category", category);
+        if (category==="") {
+            return
+        }
         formData.append("category", category)
         formData.append("stockQuantity", inventoryData.stockQuantity);
-        formData.append("shoeImages", images[0] ); // TODO: Add shoe images
+        formData.append("shoeImages", images[0] );
         const res = await addToInventory(formData)
         const { message } = await res.json();
         if (res.status === 201) {
@@ -43,6 +36,17 @@ export default function Inventory() {
             console.error(message);
         }
     }
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setInventoryData({...inventoryData,[name]: value});
+    };
+
+    useEffect(()=>{
+        fetchInventory()
+            .then((res)=>{setInventory(res.inventory)})
+            .catch((err)=>console.log(err))
+    },[handleSubmit])
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -58,6 +62,7 @@ export default function Inventory() {
                 <input type="text" onChange={handleChange} name="color" placeholder="Color" />
                 <input type="text" onChange={handleChange} name="sizes" placeholder="Sizes" />
                 <select onChange={(e)=>setCategory(e.target.value)} name="category">
+                    <option value="">Select Category</option>
                     <option value="Formal">Formal</option>
                     <option value="Casual">Casual</option>
                     <option value="Sports">Sports</option>
