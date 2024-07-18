@@ -70,16 +70,17 @@ export async function POST(request) {
         const shoeImages = []
         async function saveImages() {
             // check if brand dir exists
-            const brandDir = `./public/${brand}`;
-            if (!fs.existsSync(brandDir)) {
-                fs.mkdirSync(brandDir);
+            const imageDir = `./public/${brand}/${category}/${name}`;
+            if (!fs.existsSync(imageDir)) {
+                fs.mkdirSync(imageDir, { recursive: true });
             }
         
             for (const Image of ImageData) {
-                const filePath = `./public/${brand}/${Image.name}`;
+                const filePath = `./public/${brand}/${category}/${name}/${Image.name}`;
                 try {
                     await pump(Image.stream(), fs.createWriteStream(filePath));
-                    shoeImages.push(`http://localhost:3000/${Image.name}`);
+                    console.log(`http://localhost:3000/${brand}/${category}/${name}/${Image.name}`);
+                    shoeImages.push(`http://localhost:3000/${brand}/${category}/${name}/${Image.name}`);
                     console.log(`File ${Image.name} saved successfully to ${filePath}`);
                 } catch (error) {
                     console.error(`Error saving ${Image.name}:`, error);
