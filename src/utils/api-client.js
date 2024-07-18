@@ -75,6 +75,21 @@ export async function fetchCart() {
     }
 }
 
+export async function addToCart(productId, quantity=1) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/cart`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({productId, quantity}),
+        })
+        return res
+    } catch (error) {
+        console.log("Failed to add product to cart", error);
+    }
+}
 
 export async function fetchLogout() {
     try {
