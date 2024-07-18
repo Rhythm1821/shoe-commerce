@@ -29,7 +29,7 @@ const RegisterForm = ({ type }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md w-1/3 mx-auto">
+    <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md w-1/3 mx-auto text-gray-700">
       <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
       <div className="mb-4">
         <Label htmlFor="username" className="block mb-1">
