@@ -4,16 +4,11 @@ import { addToInventory, fetchInventory } from "@/utils/api-client"
 import { useEffect, useState } from "react"
 
 export default function Inventory() {
-
-    // check cookies to check the type
-    // const isSeller = cookies().get('type')?.value === 'seller';
     const [inventory, setInventory] = useState([]);
     const [inventoryData, setInventoryData] = useState({});
     const [images, setImages] = useState([]);
     const [category, setCategory] = useState("")
     const [error, setError] = useState(null)
-
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,54 +20,62 @@ export default function Inventory() {
         formData.append("material", inventoryData.material);
         formData.append("color", inventoryData.color);
         formData.append("sizes", inventoryData.sizes);
-        if (category==="") {
-            return
+        if (category === "") {
+            return;
         }
-        formData.append("category", category)
+        formData.append("category", category);
         formData.append("stockQuantity", inventoryData.stockQuantity);
-        formData.append("shoeImages", images[0] );
-        const res = await addToInventory(formData)
+        formData.append("shoeImages", images[0]);
+        const res = await addToInventory(formData);
         const { message } = await res.json();
         if (res.status === 201) {
             console.log(message);
-            return message
+            try {
+                const updatedInventory = await fetchInventory();
+                const data = await updatedInventory.json();
+                if (!updatedInventory.ok) {
+                    setError(data.message);
+                }
+                setInventory(data.inventory);
+            } catch (error) {
+                setError(error.message);
+            }
+            return message;
         } else {
             console.error(message);
         }
-    }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setInventoryData({...inventoryData,[name]: value});
+        setInventoryData({ ...inventoryData, [name]: value });
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         async function getInventory() {
-            const res = await fetchInventory();
-            const data = await res.json();
-            console.log("res", res);
-            if (!res.ok) {
-                setError(data.message)
+            try {
+                const res = await fetchInventory();
+                const data = await res.json();
+                console.log("res", res);
+                if (!res.ok) {
+                    setError(data.message);
+                }
+                setInventory(data.inventory);
+            } catch (error) {
+                setError(error.message);
             }
-
-            setInventory(data.inventory)
         }
-
-        getInventory()
-
-    },[handleSubmit])
+        getInventory();
+    }, []);
 
     if (error) {
-        return <p>{error}</p>
+        return <p>{error}</p>;
     }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <h2>Inventory</h2>
-            {
-            inventory &&
-            
-            inventory.map((product)=>(
+            {inventory && inventory.map((product) => (
                 <div className="p-6 rounded shadow-md w-1/3 mx-auto text-gray-800 mr-2" key={product._id}>
                     <p>{product.name}</p>
                     <p>{product.description}</p>
@@ -94,7 +97,7 @@ export default function Inventory() {
                 <input type="text" onChange={handleChange} name="material" placeholder="Material" />
                 <input type="text" onChange={handleChange} name="color" placeholder="Color" />
                 <input type="text" onChange={handleChange} name="sizes" placeholder="Sizes" />
-                <select onChange={(e)=>setCategory(e.target.value)} name="category">
+                <select onChange={(e) => setCategory(e.target.value)} name="category">
                     <option value="">Select Category</option>
                     <option value="Formal">Formal</option>
                     <option value="Casual">Casual</option>
@@ -102,10 +105,10 @@ export default function Inventory() {
                     <option value="Ethnic">Ethnic</option>
                     <option value="Boots">Boots</option>
                 </select>
-                <input type="text"  onChange={handleChange} name="stockQuantity" placeholder="Stock Quantity" />
-                <input type="file" multiple onChange={(e)=>setImages(e.target.files)}  name="image" placeholder="Image" />
+                <input type="text" onChange={handleChange} name="stockQuantity" placeholder="Stock Quantity" />
+                <input type="file" multiple onChange={(e) => setImages(e.target.files)} name="image" placeholder="Image" />
                 <Button type="submit">Submit</Button>
             </form>
         </div>
-    )
+    );
 }
