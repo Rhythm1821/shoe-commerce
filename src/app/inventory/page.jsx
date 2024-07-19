@@ -4,10 +4,14 @@ import { addToInventory, fetchInventory } from "@/utils/api-client"
 import { useEffect, useState } from "react"
 
 export default function Inventory() {
+
+    // check cookies to check the type
+    // const isSeller = cookies().get('type')?.value === 'seller';
     const [inventory, setInventory] = useState([]);
     const [inventoryData, setInventoryData] = useState({});
     const [images, setImages] = useState([]);
     const [category, setCategory] = useState("")
+    const [error, setError] = useState(null)
 
     
 
@@ -43,17 +47,46 @@ export default function Inventory() {
     };
 
     useEffect(()=>{
-        fetchInventory()
-            .then((res)=>{setInventory(res.inventory)})
-            .catch((err)=>console.log(err))
+        async function getInventory() {
+            const res = await fetchInventory();
+            const data = await res.json();
+            console.log("res", res);
+            if (!res.ok) {
+                setError(data.message)
+            }
+
+            setInventory(data.inventory)
+        }
+
+        getInventory()
+
     },[handleSubmit])
+
+    if (error) {
+        return <p>{error}</p>
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <h2>Inventory</h2>
-            {JSON.stringify(inventory)}
+            {
+            inventory &&
+            
+            inventory.map((product)=>(
+                <div className="p-6 rounded shadow-md w-1/3 mx-auto text-gray-800 mr-2" key={product._id}>
+                    <p>{product.name}</p>
+                    <p>{product.description}</p>
+                    <p>{product.price}</p>
+                    <p>{product.brand}</p>
+                    <p>{product.material}</p>
+                    <p>{product.color}</p>
+                    <p>{product.sizes}</p>
+                    <p>{product.category}</p>
+                    <p>{product.stockQuantity}</p>
+                </div>
+            ))}
 
-            <form onSubmit={handleSubmit} method="post" className="p-6 rounded shadow-md w-1/3 mx-auto">
+            <form onSubmit={handleSubmit} method="post" className="p-6 rounded shadow-md w-1/3 mx-auto text-gray-800">
                 <input type="text" onChange={handleChange} name="name" placeholder="Name" />
                 <input type="text" onChange={handleChange} name="description" placeholder="Description" />
                 <input type="text" onChange={handleChange} name="price" placeholder="Price" />
