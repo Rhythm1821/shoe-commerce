@@ -21,7 +21,7 @@ export default function Card({ product }) {
   if (!product) return <div>Loading...</div>;
 
   return (
-    <Link href={`/product/${product._id}`}>
+    <Link target="_blank" href={`/product/${product._id}`}>
       <div className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden mx-auto p-6">
         <div className="w-full h-64 overflow-hidden rounded-t-lg">
           <img src={product.shoeImages} alt={product.name} className="w-full h-full object-cover mb-6" />

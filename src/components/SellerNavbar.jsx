@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export default function Navbar({ isAuthenticated }) {
+export default function SellerNavbar({ isAuthenticated }) {
     return (
         <nav className="bg-gray-900 text-white p-4 sticky top-0">
             <div className="container mx-auto flex items-center">
@@ -19,6 +19,7 @@ export default function Navbar({ isAuthenticated }) {
                         {isAuthenticated ? (
                             <>
                             <li><Link href="/account">Account</Link></li>
+                            <li><Link href="/inventory">Inventory</Link></li>
                             <li><Link href="/logout">Logout</Link></li>
                             </>
                         ) : (
@@ -27,8 +28,6 @@ export default function Navbar({ isAuthenticated }) {
                                 <li><Link href="/register">Register</Link></li>
                             </>
                         )}
-                        <li><Link href="/cart">Cart</Link></li>
-                        <li><Link href={"/seller/home"}>Become a seller</Link></li>
                     </ul>
                 </div>
             </div>
