@@ -6,6 +6,7 @@ export async function POST(request) {
         const response = NextResponse.json({message: "Logout successful"}, { status: 200 });
         response.cookies.delete("accessToken");
         response.cookies.delete("refreshToken");
+        response.cookies.delete("type");    
         return response;
 
     } catch (error) {

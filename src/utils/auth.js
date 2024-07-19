@@ -7,6 +7,13 @@ dbConnect();
 
 export async function buyerAuth(req) {
     const cookieStore = cookies(req);
+
+    // check user type
+    const type = cookieStore.get('type')?.value;
+
+    if (type!=="buyer") {
+        return false
+    }
     const accessToken = cookieStore.get('accessToken')?.value;
 
     if (accessToken) {
@@ -28,6 +35,13 @@ export async function buyerAuth(req) {
 
 export async function sellerAuth(req) {
     const cookieStore = cookies(req);
+
+    // check user type
+    const type = cookieStore.get('type')?.value;
+
+    if (type!=="seller") {
+        return false
+    }
     const accessToken = cookieStore.get('accessToken')?.value;
     if (accessToken) {
         try {

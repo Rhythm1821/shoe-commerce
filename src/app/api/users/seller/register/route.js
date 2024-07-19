@@ -67,6 +67,7 @@ export async function POST(request) {
     
         response.cookies.set("accessToken", accessToken, { httpOnly: true });
         response.cookies.set("refreshToken", refreshToken, { httpOnly: true });
+        response.cookies.set("type", "seller", { httpOnly: true });
     
         return response
     } catch (error) {
