@@ -1,20 +1,34 @@
 'use client'
 import { fetchCart } from "@/utils/api-client";
 import { useEffect, useState } from "react";
-import CartComponent from "@/components/CartComponent";
 
 export default function Cart() {
     const [cart, setCart] = useState([]);
+    const [error, setError] = useState(null)
 
     useEffect(()=>{
-        fetchCart()
-            .then((res)=>setCart(res.cart))
-            .catch((err)=>console.log(err))
+        async function getCart() {
+            const res = await fetchCart();
+            const data = await res.json();
+            console.log("res", res);
+            if (!res.ok) {
+                setError(data.message)
+            }
+
+            setCart(data.cart)
+        }
+
+        getCart()
+
     },[])
+
+    if (error) {
+        return <div>{error}</div>
+    }
     
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-            {cart ? <CartComponent cart={cart} /> : <p>Loading...</p>}
-        </div>
+        <>
+         {JSON.stringify(cart)}
+        </>
     )
 }

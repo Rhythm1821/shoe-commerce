@@ -25,6 +25,14 @@ export async function fetchProducts() {
     }
 }
 
+export async function fetchProductDetails(id) {
+    const res = await fetch(`${API_BASE_URL}/api/product-details/${id}`,{
+        method: "GET",
+    });
+
+    return res
+}
+
 export async function postRegisterDetails(data, type) {
     try {
         const res = await fetch(`${API_BASE_URL}/api/users/${type}/register`, {
@@ -63,13 +71,7 @@ export async function fetchCart() {
             },
             credentials: "include",
         });
-
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
-        return data;
+        return res
     } catch (error) {
         console.log("Failed to fetch cart", error);
     }
@@ -119,9 +121,7 @@ export async function fetchInventory(){
         },
         credentials: "include",
     })
-
-    const data = await res.json();
-    return data
+    return res
 }
 
 export async function addToInventory(data) {
