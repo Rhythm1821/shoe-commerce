@@ -5,12 +5,6 @@ import { NextResponse } from "next/server";
 // api/product-details (GET)
 export async function GET(request,context) {
 
-    const isAuthenticated = await buyerAuth(request);
-
-    if (!isAuthenticated) {
-        return NextResponse.json({message: "Unauthorized"}, { status: 401 })
-    }
-
     try {
         const { id } = context.params;
     

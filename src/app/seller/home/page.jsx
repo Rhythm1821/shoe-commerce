@@ -3,8 +3,9 @@ import Link from "next/link";
 export default function SellerHome() {
 
     return (
-        <>
-         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><Link href="/seller/register">Register</Link></button> <br />
+        <div className="container">
+         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 mt-4"><Link href="/seller/register">Register</Link></button> <br />
+         <p>
          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea accusantium aliquam quos aperiam, quidem unde quis, saepe aspernatur necessitatibus rerum repellendus iure debitis repellat! Nisi, aspernatur. Quis delectus voluptatibus iste.
          Incidunt repellat explicabo enim culpa deleniti inventore dolorum perspiciatis itaque autem soluta. Ad voluptate tempora libero ducimus. Vitae, unde? Excepturi nihil voluptate cumque suscipit labore commodi vel, enim ipsam quod?
          Similique facere asperiores fuga illo placeat, iure fugiat est, non fugit quos itaque eius modi consequuntur eos eveniet pariatur, doloribus qui harum alias cupiditate quo aliquid. Voluptates id fugit accusamus.
@@ -15,6 +16,7 @@ export default function SellerHome() {
          Saepe nihil explicabo enim necessitatibus nulla numquam excepturi nemo corrupti. Doloribus voluptatum blanditiis laudantium officia labore harum, officiis molestias! Facere cum, provident nobis adipisci modi deleniti repudiandae fugiat non hic.
          Autem possimus, porro sed itaque eaque optio, repellat provident, incidunt dicta deleniti magni omnis. Odio, ullam magni at rem perspiciatis, culpa doloribus tenetur animi natus laboriosam corporis harum quos nemo.
          Omnis velit, consectetur, alias fugiat, esse quibusdam reiciendis assumenda necessitatibus id laudantium eius similique. Qui atque aperiam tenetur aspernatur praesentium placeat corporis cum labore voluptate provident necessitatibus suscipit, harum molestiae.
-        </>
+         </p>
+        </div>
     )
 }
