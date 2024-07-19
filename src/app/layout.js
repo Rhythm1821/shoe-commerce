@@ -1,28 +1,37 @@
+'use client';
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import { cookies } from "next/headers";
-import { headers } from "next/headers";
+import SellerNavbar from "@/components/SellerNavbar";
+import { getCookie } from "cookies-next";
+import { usePathname } from "next/navigation";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
 
-  const heads = headers()
- 
-  const pathname = heads.get('next-url')
+  // Get current path
+  const pathname = usePathname();
+  
   const noNavRoutes = ['/login', '/register', '/seller/login', '/seller/register']
 
-  const cookie = cookies();
-  const accessToken = cookie.get('accessToken')?.value;
-  const refreshToken = cookie.get('refreshToken')?.value;
+  // Get cookies
+  const accessToken = getCookie('accessToken')
+  const refreshToken = getCookie('refreshToken')
+  const type = getCookie('type')
   
+  // Check if user is authenticated
   const isAuthenticated = accessToken && refreshToken ? true : false;
 
   return (
     <html lang="en">
       <body className={inter.className}>
-        {!noNavRoutes.includes(pathname) && <Navbar isAuthenticated={isAuthenticated} />}
+        {
+          !noNavRoutes.includes(pathname) && (
+            type==='seller' ? <SellerNavbar /> : <Navbar isAuthenticated={isAuthenticated} />
+          )
+        }
         {children}
       </body>
     </html>
