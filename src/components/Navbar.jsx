@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Navbar({ isAuthenticated }) {
     return (
-        <nav className="bg-gray-900 text-white p-4 sticky top-0">
+        <nav className="bg-white text-black p-4 sticky top-0 shadow z-10">
             <div className="container mx-auto flex items-center">
                 <div className="flex items-center space-x-4">
                     
