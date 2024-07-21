@@ -1,14 +1,24 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import { addToInventory, fetchInventory } from "@/utils/api-client"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export default function Inventory() {
     const [inventory, setInventory] = useState([]);
-    const [inventoryData, setInventoryData] = useState({});
+    const [inventoryData, setInventoryData] = useState({
+        name: '',
+        description: '',
+        price: '',
+        brand: '',
+        material: '',
+        color: '',
+        sizes: '',
+        stockQuantity: ''
+    });
     const [images, setImages] = useState([]);
-    const [category, setCategory] = useState("")
-    const [error, setError] = useState(null)
+    const [category, setCategory] = useState("");
+    const [error, setError] = useState(null);
+    const fileInputRef = useRef(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -37,6 +47,22 @@ export default function Inventory() {
                     setError(data.message);
                 }
                 setInventory(data.inventory);
+                // Reset form fields
+                setInventoryData({
+                    name: '',
+                    description: '',
+                    price: '',
+                    brand: '',
+                    material: '',
+                    color: '',
+                    sizes: '',
+                    stockQuantity: ''
+                });
+                setImages([]);
+                setCategory('');
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
             } catch (error) {
                 setError(error.message);
             }
@@ -90,14 +116,14 @@ export default function Inventory() {
             ))}
 
             <form onSubmit={handleSubmit} method="post" className="p-6 rounded shadow-md w-1/3 mx-auto text-gray-800">
-                <input type="text" onChange={handleChange} name="name" placeholder="Name" />
-                <input type="text" onChange={handleChange} name="description" placeholder="Description" />
-                <input type="text" onChange={handleChange} name="price" placeholder="Price" />
-                <input type="text" onChange={handleChange} name="brand" placeholder="Brand" />
-                <input type="text" onChange={handleChange} name="material" placeholder="Material" />
-                <input type="text" onChange={handleChange} name="color" placeholder="Color" />
-                <input type="text" onChange={handleChange} name="sizes" placeholder="Sizes" />
-                <select onChange={(e) => setCategory(e.target.value)} name="category">
+                <input type="text" value={inventoryData.name} onChange={handleChange} name="name" placeholder="Name" />
+                <input type="text" value={inventoryData.description} onChange={handleChange} name="description" placeholder="Description" />
+                <input type="text" value={inventoryData.price} onChange={handleChange} name="price" placeholder="Price" />
+                <input type="text" value={inventoryData.brand} onChange={handleChange} name="brand" placeholder="Brand" />
+                <input type="text" value={inventoryData.material} onChange={handleChange} name="material" placeholder="Material" />
+                <input type="text" value={inventoryData.color} onChange={handleChange} name="color" placeholder="Color" />
+                <input type="text" value={inventoryData.sizes} onChange={handleChange} name="sizes" placeholder="Sizes" />
+                <select value={category} onChange={(e) => setCategory(e.target.value)} name="category">
                     <option value="">Select Category</option>
                     <option value="Formal">Formal</option>
                     <option value="Casual">Casual</option>
@@ -105,8 +131,8 @@ export default function Inventory() {
                     <option value="Ethnic">Ethnic</option>
                     <option value="Boots">Boots</option>
                 </select>
-                <input type="text" onChange={handleChange} name="stockQuantity" placeholder="Stock Quantity" />
-                <input type="file" multiple onChange={(e) => setImages(e.target.files)} name="image" placeholder="Image" />
+                <input type="text" value={inventoryData.stockQuantity} onChange={handleChange} name="stockQuantity" placeholder="Stock Quantity" />
+                <input type="file" multiple onChange={(e) => setImages(e.target.files)} ref={fileInputRef} name="image" placeholder="Image" />
                 <Button type="submit">Submit</Button>
             </form>
         </div>
