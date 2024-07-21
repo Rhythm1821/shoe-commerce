@@ -28,7 +28,7 @@ export default function Cart() {
     
     return (
         <>
-         {JSON.stringify(cart)}
+         <div className="h-screen text-gray-600">{JSON.stringify(cart)}</div>
         </>
     )
 }

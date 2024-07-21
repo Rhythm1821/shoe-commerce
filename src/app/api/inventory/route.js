@@ -33,7 +33,6 @@ export async function GET(request) {
 
 // api/inventory (POST)
 export async function POST(request) {
-    console.log("Reached the inventory endpoint");
     const isAuthenticated = await sellerAuth(request);
 
     if (!isAuthenticated) {
@@ -46,9 +45,7 @@ export async function POST(request) {
         if (!currentSeller) {
             return NextResponse.json({message: "You must be a seller"}, { status: 404 });
         }
-        console.log("Checking form data...");
         const FormData = await request.formData(); // error here
-        console.log("FormData line-50", FormData);
         
         const name = FormData.get('name')
         const description = FormData.get('description')
@@ -66,7 +63,6 @@ export async function POST(request) {
             return NextResponse.json({message: "Missing required fields"}, { status: 400 });
         }
         
-        console.log("Saving images...");
         const shoeImages = []
         async function saveImages() {
             // check if brand dir exists
