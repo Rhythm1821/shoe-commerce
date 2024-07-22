@@ -8,10 +8,10 @@ export async function GET(request) {
     const isAuthenticated = await buyerAuth(request);
 
     if (!isAuthenticated) {
-        return NextResponse.json({message: "Unauthorized"}, { status: 401 })
+        return NextResponse.json({message: "Sign Up to add items to cart"}, { status: 401 })
     }
 
-    const cart = await Cart.findOne({buyer: request.user._id});
+    const cart = await Cart.findOne({buyer: request.user._id}).populate({path: "cartItems.product", select: "name price color category shoeImages"});
     return NextResponse.json({cart}, { status: 200 });
 }
 
@@ -23,7 +23,7 @@ export async function POST(request) {
     const isAuthenticated = await buyerAuth(request);
 
     if (!isAuthenticated) {
-        return NextResponse.json({message: "Unauthorized"}, { status: 401 })
+        return NextResponse.json({message: "Sign Up to add items to cart"}, { status: 401 })
     }
 
     // Get the data
@@ -42,7 +42,7 @@ export async function POST(request) {
     if (!cart) {
         const newCart = new Cart({
             buyer: request.user._id,
-            cartItems: [{product: productId, quantity}],            
+            cartItems: [{product: productId, quantity, size: body.size}],            
         })
         await newCart.save();
         return NextResponse.json({message: "Cart created successfully"}, { status: 201 });
@@ -69,7 +69,7 @@ export async function PUT(request) {
     const isAuthenticated = await buyerAuth(request);
 
     if (!isAuthenticated) {
-        return NextResponse.json({message: "Unauthorized"}, { status: 401 })
+        return NextResponse.json({message: "Sign Up to add items to cart"}, { status: 401 })
     }
 
     // Get the query params id
