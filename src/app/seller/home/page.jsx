@@ -5,6 +5,7 @@ export default function SellerHome() {
     return (
         <div className="container">
          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 mt-4"><Link href="/seller/register">Register</Link></button> <br />
+         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 mt-4"><Link href="/seller/login">Login</Link></button> <br />
          <p>
          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea accusantium aliquam quos aperiam, quidem unde quis, saepe aspernatur necessitatibus rerum repellendus iure debitis repellat! Nisi, aspernatur. Quis delectus voluptatibus iste.
          Incidunt repellat explicabo enim culpa deleniti inventore dolorum perspiciatis itaque autem soluta. Ad voluptate tempora libero ducimus. Vitae, unde? Excepturi nihil voluptate cumque suscipit labore commodi vel, enim ipsam quod?
