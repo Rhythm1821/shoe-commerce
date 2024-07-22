@@ -10,8 +10,6 @@ export async function GET() {
     
     // Check if user is authenticated
     const isAuthenticated = hasAccessToken && hasRefreshToken ? true : false;
-
-    console.log("isAuthenticated hai ki nhi", isAuthenticated, "type", type);
-    
+   
     return NextResponse.json({isAuthenticated, type});
 }
