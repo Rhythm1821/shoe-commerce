@@ -1,13 +1,12 @@
 'use client'
 
 import { addToCart } from "@/utils/api-client";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "./ui/button";
 
 export default function Card({ product }) {
 
-  if (!product) return <div>Loading...</div>;
+  if (!product) return <div className="text-center text-gray-600">Loading...</div>;
 
   const handleAddToCart = async (e,productId, quantity) => {
     e.preventDefault();
@@ -22,7 +21,7 @@ export default function Card({ product }) {
     }
   };
 
-  if (!product) return <div>Loading...</div>;
+  if (!product) return <div className="text-center text-gray-600">Loading...</div>;
 
   return (
       <div className="max-w-sm bg-zinc-50 rounded-2xl shadow-lg overflow-hidden mx-auto p-6 transition-transform transform hover:scale-105 w-full">
