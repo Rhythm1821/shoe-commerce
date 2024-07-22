@@ -1,3 +1,4 @@
+// import { cookies } from "next/headers"
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
 
@@ -136,4 +137,17 @@ export async function addToInventory(data) {
     } catch (error) {
         console.log("Error while adding product to inventory", error);
     }
+}
+
+export async function isAuthenticatedAndType() {
+    const res = await fetch(`${API_BASE_URL}/api/cookies`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+
+    console.log("res", res);
+
+    return res
 }
