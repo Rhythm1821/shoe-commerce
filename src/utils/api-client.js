@@ -22,7 +22,7 @@ export async function fetchProducts() {
         const data = await res.json();
         return data.products
     } catch (error) {
-        console.log("Failed to fetch products", error);
+        alert("Failed to fetch products", error);
     }
 }
 
@@ -46,7 +46,7 @@ export async function postRegisterDetails(data, type) {
 
         return res
     } catch (error) {
-        console.log("Error while posting register details", error);
+        alert("Error while posting register details", error);
     }
 }
 
@@ -74,7 +74,7 @@ export async function fetchCart() {
         });
         return res
     } catch (error) {
-        console.log("Failed to fetch cart", error);
+        alert("Failed to fetch cart", error);
     }
 }
 
@@ -90,7 +90,7 @@ export async function addToCart(productId, quantity=1) {
         })
         return res
     } catch (error) {
-        console.log("Failed to add product to cart", error);
+        alert("Failed to add product to cart", error);
     }
 }
 
@@ -108,7 +108,7 @@ export async function fetchLogout() {
         const data = await res.json();
         return data
     } catch (error) {
-        console.log("Failed to logout", error);
+        alert("Failed to logout", error);
     }
 }
 
@@ -135,7 +135,7 @@ export async function addToInventory(data) {
     
         return res
     } catch (error) {
-        console.log("Error while adding product to inventory", error);
+        alert("Error while adding product to inventory", error);
     }
 }
 
@@ -146,8 +146,6 @@ export async function isAuthenticatedAndType() {
             "Content-Type": "application/json",
         },
     })
-
-    console.log("res", res);
 
     return res
 }
