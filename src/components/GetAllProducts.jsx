@@ -20,7 +20,10 @@ export default function GetAllProducts() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-6">
                 {allProducts?.length > 0 ? (
                     allProducts.map((product, index) => (
+                        // check if the product has images present or not
+                        product.shoeImages?.length >= 1 ? (
                         <Card key={index} product={product} />
+                        ) : null
                     ))
                 ) : (
                     <p className="text-center text-gray-600 text-xl">Loading...</p>
