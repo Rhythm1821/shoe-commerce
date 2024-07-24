@@ -4,7 +4,6 @@ import { addToInventory, fetchInventory } from "@/utils/api-client";
 import { useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import Link from "next/link";
 
 export default function Inventory() {
     const [inventory, setInventory] = useState([]);
@@ -137,8 +136,7 @@ export default function Inventory() {
                         </thead>
                         <tbody>
                             {inventory && inventory.map((product) => (
-                                <tr key={product._id}>
-                                    <Link target="_blank" href={`/product/${product._id}`}>
+                                <tr key={product._id} onClick={()=> window.open(`/product/${product._id}`, '_blank')} className="cursor-pointer hover:bg-gray-100">
                                     <td className="py-2 px-4 border-b">{product.name}</td>
                                     <td className="py-2 px-4 border-b">
                                         {showFullDescription === product._id 
@@ -164,7 +162,6 @@ export default function Inventory() {
                                         <Button className="mr-2">Edit</Button>
                                         <Button className="mr-2" variant="destructive">Delete</Button>
                                     </td>
-                                    </Link>
                                 </tr>
                             ))}
                         </tbody>
