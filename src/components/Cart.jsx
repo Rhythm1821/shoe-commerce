@@ -13,9 +13,6 @@ export default function Cart({open, setOpen}) {
         async function getCart() {
             const res = await fetchCart();
             const data = await res.json();
-            // if (!res.ok) {
-            //     alert(data.message)
-            // }
             if (data.cart?.cartItems) {
               setCart(data.cart?.cartItems)              
             }
