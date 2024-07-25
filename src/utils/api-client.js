@@ -149,3 +149,33 @@ export async function isAuthenticatedAndType() {
 
     return res
 }
+
+export async function deleteProductFromInventory(id) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        })
+    
+        return res
+    } catch (error) {
+        console.log("Error while deleting product from inventory", error);
+    }
+}
+
+export async function updateInventory(id, data) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory/${id}`, {
+            method: "PUT",
+            credentials: "include",
+            body: data
+        })
+
+        return res
+    } catch (error) {
+        console.log("Error while editing product from inventory", error);
+    }
+}

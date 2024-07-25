@@ -47,5 +47,28 @@ async function refreshAccessToken(user) {
     }
 }
 
+import fs from 'fs';
+import { pipeline } from 'stream';
+import { promisify } from 'util';
+const pump = promisify(pipeline);
+async function saveImages({name, brand, category, imageFiles, shoeImages}) {
+    const imageDir = `./public/${brand}/${category}/${name}`;
+    if (!fs.existsSync(imageDir)) {
+        fs.mkdirSync(imageDir, { recursive: true });
+    }
 
-export { generateAccessAndRefreshToken, refreshAccessToken };
+    for (const image of imageFiles) {
+        const filePath = `${imageDir}/${image.name}`;
+        try {
+            await pump(image.stream(), fs.createWriteStream(filePath));
+            shoeImages.push(`http://localhost:3000/${brand}/${category}/${name}/${image.name}`);
+            console.log(`File ${image.name} saved successfully to ${filePath}`);
+            return {message: `File ${image.name} saved successfully to ${filePath}`};
+        } catch (error) {
+            console.error(`Error saving ${image.name}:`, error);
+            return {message: `Error saving ${image.name}: ${error}`};
+        }
+    }
+}
+
+export { generateAccessAndRefreshToken, refreshAccessToken , saveImages};
