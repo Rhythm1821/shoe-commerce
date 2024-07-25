@@ -1,9 +1,9 @@
 'use client'
 import { Button } from "@/components/ui/button";
-import { addToInventory, fetchInventory } from "@/utils/api-client";
+import { addToInventory, deleteProductFromInventory, fetchInventory, updateInventory } from "@/utils/api-client";
 import { useEffect, useRef, useState } from "react";
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+
+import ProductInventoryModal from "@/components/Modal/Inventory/Product";
 
 export default function Inventory() {
     const [inventory, setInventory] = useState([]);
@@ -17,12 +17,14 @@ export default function Inventory() {
         sizes: '',
         stockQuantity: ''
     });
+    const [productId, setProductId] = useState(null);
     const [images, setImages] = useState([]);
     const [category, setCategory] = useState("");
     const [error, setError] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const [showFullDescription, setShowFullDescription] = useState(null);
     const fileInputRef = useRef(null);
+    const [modalOperation,setModalOperation] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -40,40 +42,79 @@ export default function Inventory() {
         formData.append("category", category);
         formData.append("stockQuantity", inventoryData.stockQuantity);
         formData.append("shoeImages", images[0]);
-        const res = await addToInventory(formData);
-        const { message } = await res.json();
-        if (res.status === 201) {
-            console.log(message);
-            try {
-                const updatedInventory = await fetchInventory();
-                const data = await updatedInventory.json();
-                if (!updatedInventory.ok) {
-                    setError(data.message);
+        if (modalOperation === "add") {
+            const res = await addToInventory(formData);
+            const { message } = await res.json();
+            if (res.status === 201) {
+                console.log(message);
+                try {
+                    const updatedInventory = await fetchInventory();
+                    const data = await updatedInventory.json();
+                    if (!updatedInventory.ok) {
+                        setError(data.message);
+                    }
+                    setInventory(data.inventory);
+                    // Reset form fields
+                    setInventoryData({
+                        name: '',
+                        description: '',
+                        price: '',
+                        brand: '',
+                        material: '',
+                        color: '',
+                        sizes: '',
+                        stockQuantity: ''
+                    });
+                    setImages([]);
+                    setCategory('');
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                    }
+                    setIsOpen(false); // Close the modal
+                } catch (error) {
+                    setError(error.message);
                 }
-                setInventory(data.inventory);
-                // Reset form fields
-                setInventoryData({
-                    name: '',
-                    description: '',
-                    price: '',
-                    brand: '',
-                    material: '',
-                    color: '',
-                    sizes: '',
-                    stockQuantity: ''
-                });
-                setImages([]);
-                setCategory('');
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                }
-                setIsOpen(false); // Close the modal
-            } catch (error) {
-                setError(error.message);
+                return message;
+            } else {
+                console.error(message);
             }
-            return message;
-        } else {
-            console.error(message);
+        } 
+        else if (modalOperation === "edit") {
+            const res = await updateInventory(productId, formData);
+            const { message } = await res.json();
+            if (res.status === 200) {
+                console.log(message);
+                try {
+                    const updatedInventory = await fetchInventory();
+                    const data = await updatedInventory.json();
+                    if (!updatedInventory.ok) {
+                        setError(data.message);
+                    }
+                    setInventory(data.inventory);
+                    // Reset form fields
+                    setInventoryData({
+                        name: '',
+                        description: '',
+                        price: '',
+                        brand: '',
+                        material: '',
+                        color: '',
+                        sizes: '',
+                        stockQuantity: ''
+                    });
+                    setImages([]);
+                    setCategory('');
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                    }
+                    setIsOpen(false); // Close the modal
+                } catch (error) {
+                    setError(error.message);
+                }
+                return message;
+            } else {
+                console.error(message);
+            }
         }
     };
 
@@ -81,6 +122,22 @@ export default function Inventory() {
         const { name, value } = e.target;
         setInventoryData({ ...inventoryData, [name]: value });
     };
+
+    const handleDelete = async (id) => {
+        try {
+            const res = await deleteProductFromInventory(id);
+            const data = await res.json();
+            if (!res.ok) {
+                setError(data.message);
+            }
+            console.log("deleted", data);
+            setInventory(inventory.filter((product) => product._id !== id));
+            alert("Product deleted successfully");
+            return data.message;
+        } catch (error) {
+            console.log("error deleting", error);
+        }
+    }
 
     useEffect(() => {
         async function getInventory() {
@@ -100,7 +157,35 @@ export default function Inventory() {
     }, []);
 
     const closeModal = () => setIsOpen(false);
-    const openModal = () => setIsOpen(true);
+
+    const openModal = (product = null) => {
+        if (product) {
+            setInventoryData({
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                brand: product.brand,
+                material: product.material,
+                color: product.color,
+                sizes: product.sizes,
+                stockQuantity: product.stockQuantity
+            });
+            setCategory(product.category);
+        } else {
+            setInventoryData({
+                name: '',
+                description: '',
+                price: '',
+                brand: '',
+                material: '',
+                color: '',
+                sizes: '',
+                stockQuantity: ''
+            });
+            setCategory('');
+        }
+        setIsOpen(true);
+    };
 
     if (error) {
         return <p>{error}</p>;
@@ -116,7 +201,10 @@ export default function Inventory() {
     return (
         <div className="min-h-screen w-full bg-gray-100 p-4">
             <h2 className="text-2xl font-bold text-center mb-4">Inventory</h2>
-            <Button onClick={openModal} className="bg-blue-500 text-white p-2 rounded-full mb-4">+</Button>
+            <Button onClick={() => {
+                setModalOperation("add");
+                openModal();
+            }} className="bg-blue-500 text-white p-2 rounded-full mt-4 hover:bg-blue-600">Add Product</Button>
             <div className="flex flex-col items-center">
                 <div className="w-full max-w-5xl mb-4 overflow-x-auto">
                     <table className="min-w-full  bg-white">
@@ -136,18 +224,25 @@ export default function Inventory() {
                         </thead>
                         <tbody>
                             {inventory && inventory.map((product) => (
-                                <tr key={product._id} onClick={()=> window.open(`/product/${product._id}`, '_blank')} className="cursor-pointer hover:bg-gray-100">
+                                <tr key={product._id} onClick={(e)=> {
+                                    if (e.target.id !== `show-more-btn-${product._id}`) {
+                                        window.open(`/product/${product._id}`, '_blank')
+                                    }
+                                }} className="cursor-pointer hover:bg-gray-100">
                                     <td className="py-2 px-4 border-b">{product.name}</td>
                                     <td className="py-2 px-4 border-b">
                                         {showFullDescription === product._id 
                                             ? product.description 
                                             : truncateDescription(product.description, 30)}
                                         {product.description.length > 10 && (
-                                            <button 
-                                                className="text-blue-500 ml-2" 
-                                                onClick={() => setShowFullDescription(showFullDescription === product._id ? null : product._id)}
+                                            <button id={`show-more-btn-${product._id}`}
+                                                className="text-blue-500 ml-2 text-sm hover:text-blue-700" 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setShowFullDescription(showFullDescription === product._id ? null : product._id)
+                                                }}
                                             >
-                                                {showFullDescription === product._id ? <p className="text-sm">Show less</p> : <h6 className="text-sm">More...</h6>}
+                                                {showFullDescription === product._id ? <p>Show less</p> : <h6>...more</h6>}
                                             </button>
                                         )}
                                     </td>
@@ -159,8 +254,17 @@ export default function Inventory() {
                                     <td className="py-2 px-4 border-b">{product.category}</td>
                                     <td className="py-2 px-4 border-b">{product.stockQuantity}</td>
                                     <td className="py-2 px-4 border-b">
-                                        <Button className="mr-2">Edit</Button>
-                                        <Button className="mr-2" variant="destructive">Delete</Button>
+                                        <Button onClick={(e)=>{
+                                            e.stopPropagation();
+                                            setImages(product.shoeImages);
+                                            setProductId(product._id);
+                                            setModalOperation('edit');
+                                            openModal(product);
+                                        }} className="mr-2">Edit</Button>
+                                        <Button onClick={(e)=>{
+                                            e.stopPropagation();
+                                            handleDelete(product._id)
+                                        }} className="mr-2 bg-red-500 hover:bg-red-600 rounded-s-xl" variant="destructive">Delete</Button>
                                     </td>
                                 </tr>
                             ))}
@@ -168,66 +272,20 @@ export default function Inventory() {
                     </table>
                 </div>
 
-                <Transition appear show={isOpen} as={Fragment}>
-                    <Dialog as="div" className="relative z-10" onClose={closeModal}>
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                        >
-                            <div className="fixed inset-0 bg-black bg-opacity-25" />
-                        </Transition.Child>
-
-                        <div className="fixed inset-0 overflow-y-auto">
-                            <div className="flex min-h-full items-center justify-center p-4 text-center">
-                                <Transition.Child
-                                    as={Fragment}
-                                    enter="ease-out duration-300"
-                                    enterFrom="opacity-0 scale-95"
-                                    enterTo="opacity-100 scale-100"
-                                    leave="ease-in duration-200"
-                                    leaveFrom="opacity-100 scale-100"
-                                    leaveTo="opacity-0 scale-95"
-                                >
-                                    <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                        <Dialog.Title
-                                            as="h3"
-                                            className="text-lg font-medium leading-6 text-gray-900"
-                                        >
-                                            Add New Product
-                                        </Dialog.Title>
-                                        <form onSubmit={handleSubmit} method="post" className="mt-2 space-y-4">
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <input className="border p-2" type="text" value={inventoryData.name} onChange={handleChange} name="name" placeholder="Name" />
-                                                <input className="border p-2" type="text" value={inventoryData.description} onChange={handleChange} name="description" placeholder="Description" />
-                                                <input className="border p-2" type="text" value={inventoryData.price} onChange={handleChange} name="price" placeholder="Price" />
-                                                <input className="border p-2" type="text" value={inventoryData.brand} onChange={handleChange} name="brand" placeholder="Brand" />
-                                                <input className="border p-2" type="text" value={inventoryData.material} onChange={handleChange} name="material" placeholder="Material" />
-                                                <input className="border p-2" type="text" value={inventoryData.color} onChange={handleChange} name="color" placeholder="Color" />
-                                                <input className="border p-2" type="text" value={inventoryData.sizes} onChange={handleChange} name="sizes" placeholder="Sizes" />
-                                                <select className="border p-2" value={category} onChange={(e) => setCategory(e.target.value)} name="category">
-                                                    <option value="">Select Category</option>
-                                                    <option value="Formal">Formal</option>
-                                                    <option value="Casual">Casual</option>
-                                                    <option value="Sports">Sports</option>
-                                                    <option value="Ethnic">Ethnic</option>
-                                                    <option value="Boots">Boots</option>
-                                                </select>
-                                                <input className="border p-2" type="text" value={inventoryData.stockQuantity} onChange={handleChange} name="stockQuantity" placeholder="Stock Quantity" />
-                                                <input className="border p-2" type="file" multiple onChange={(e) => setImages(e.target.files)} ref={fileInputRef} name="image" placeholder="Image" />
-                                            </div>
-                                            <Button type="submit" className="mt-4 bg-blue-500 text-white p-2 rounded">Submit</Button>
-                                        </form>
-                                    </Dialog.Panel>
-                                </Transition.Child>
-                            </div>
-                        </div>
-                    </Dialog>
-                </Transition>
+                <ProductInventoryModal 
+                isOpen={isOpen} 
+                closeModal={closeModal} 
+                inventoryData={inventoryData} 
+                setInventoryData={setInventoryData} 
+                category={category} 
+                setCategory={setCategory}
+                modalOperation={modalOperation}
+                handleSubmit={handleSubmit}
+                images={images}
+                setImages={setImages}
+                fileInputRef={fileInputRef}
+                handleChange={handleChange}
+                 />
             </div>
         </div>
     );
