@@ -51,24 +51,45 @@ import fs from 'fs';
 import { pipeline } from 'stream';
 import { promisify } from 'util';
 const pump = promisify(pipeline);
-async function saveImages({name, brand, category, imageFiles, shoeImages}) {
+// async function saveImages({name, brand, category, imageFiles, shoeImages}) {
+//     const imageDir = `./public/${brand}/${category}/${name}`;
+//     if (!fs.existsSync(imageDir)) {
+//         fs.mkdirSync(imageDir, { recursive: true });
+//     }
+
+//     for (const image of imageFiles) {
+//         const filePath = `${imageDir}/${image.name}`;
+//         try {
+//             await pump(image.stream(), fs.createWriteStream(filePath));
+//             shoeImages.push(`http://localhost:3000/${brand}/${category}/${name}/${image.name}`);
+//             console.log(`File ${image.name} saved successfully to ${filePath}`);
+//             return {message: `File ${image.name} saved successfully to ${filePath}`};
+//         } catch (error) {
+//             console.error(`Error saving ${image.name}:`, error);
+//             return {message: `Error saving ${image.name}: ${error}`};
+//         }
+//     }
+// }
+
+async function saveImages(brand, category, name, ImageData) {
     const imageDir = `./public/${brand}/${category}/${name}`;
     if (!fs.existsSync(imageDir)) {
         fs.mkdirSync(imageDir, { recursive: true });
     }
 
-    for (const image of imageFiles) {
-        const filePath = `${imageDir}/${image.name}`;
+    const shoeImages = []
+    for (const Image of ImageData) {
+        const filePath = `./public/${brand}/${category}/${name}/${Image.name}`;
         try {
-            await pump(image.stream(), fs.createWriteStream(filePath));
-            shoeImages.push(`http://localhost:3000/${brand}/${category}/${name}/${image.name}`);
-            console.log(`File ${image.name} saved successfully to ${filePath}`);
-            return {message: `File ${image.name} saved successfully to ${filePath}`};
+            await pump(Image.stream(), fs.createWriteStream(filePath));
+            console.log(`http://localhost:3000/${brand}/${category}/${name}/${Image.name}`);
+            shoeImages.push(`http://localhost:3000/${brand}/${category}/${name}/${Image.name}`);
+            console.log(`File ${Image.name} saved successfully to ${filePath}`);
         } catch (error) {
-            console.error(`Error saving ${image.name}:`, error);
-            return {message: `Error saving ${image.name}: ${error}`};
+            console.error(`Error saving ${Image.name}:`, error);
         }
     }
+    return shoeImages
 }
 
 export { generateAccessAndRefreshToken, refreshAccessToken , saveImages};
