@@ -285,6 +285,7 @@ export default function Inventory() {
                 setImages={setImages}
                 fileInputRef={fileInputRef}
                 handleChange={handleChange}
+                productId={productId}
                  />
             </div>
         </div>
