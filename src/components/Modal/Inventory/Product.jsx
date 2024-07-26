@@ -1,9 +1,13 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { Button } from '@headlessui/react';
+import { useRouter } from 'next/navigation';
 
-export default function ProductInventoryModal({ isOpen, closeModal, inventoryData, setInventoryData, category, setCategory, modalOperation, handleSubmit, images, setImages, fileInputRef, handleChange }) {
-    console.log("images", images);
+export default function ProductInventoryModal({ isOpen, closeModal, inventoryData, setInventoryData, category, setCategory, modalOperation, handleSubmit, images, setImages, fileInputRef, handleChange, productId }) {
+    const router = useRouter()
+    const handleMoreClick = (event) => {
+        window.open(`/product/${productId}`)
+    }
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -170,11 +174,16 @@ export default function ProductInventoryModal({ isOpen, closeModal, inventoryDat
                                             </select>
                                         </div>
 
-                                        {
-                                            images && images.map((image, index) => (
-                                                <img width={120} key={index} height={120} src={image} alt="" />
-                                            ))
-                                        }
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        {images.slice(0, 2).map((image, index) => (
+                                            <img width={120} key={index} height={100} src={image} alt="" style={{ marginRight: '8px' }} />
+                                        ))}
+                                        {images.length > 2 && (
+                                            <button target='_blank' onClick={handleMoreClick} style={{ cursor: 'pointer', color: 'blue', textDecoration: 'none' }}>
+                                                More...
+                                            </button>
+                                        )}
+                                        </div>
 
                                         <div className="mb-4">
                                             <label htmlFor="images" className="block text-sm font-medium text-gray-700">
