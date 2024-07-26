@@ -4,10 +4,7 @@ import { Seller } from "@/models/User.model";
 import { NextResponse } from "next/server";
 import { sellerAuth } from "@/utils/auth";
 
-import fs from 'fs';
-import { pipeline } from 'stream';
-import { promisify } from 'util';
-const pump = promisify(pipeline);
+import { saveImages } from "@/utils/utils";
 
 dbConnect()
 
@@ -26,7 +23,7 @@ export async function GET(request) {
         return NextResponse.json({message: "You must be a seller"}, { status: 404 });
     }
 
-    const inventory = await Product.find({seller: request.user._id});
+    const inventory = await Product.find({seller: request.user._id}).sort({createdAt: -1});
 
     return NextResponse.json({inventory}, { status: 200 });
 }
@@ -63,28 +60,7 @@ export async function POST(request) {
             return NextResponse.json({message: "Missing required fields"}, { status: 400 });
         }
         
-        const shoeImages = []
-        async function saveImages() {
-            // check if brand dir exists
-            const imageDir = `./public/${brand}/${category}/${name}`;
-            if (!fs.existsSync(imageDir)) {
-                fs.mkdirSync(imageDir, { recursive: true });
-            }
-        
-            for (const Image of ImageData) {
-                const filePath = `./public/${brand}/${category}/${name}/${Image.name}`;
-                try {
-                    await pump(Image.stream(), fs.createWriteStream(filePath));
-                    console.log(`http://localhost:3000/${brand}/${category}/${name}/${Image.name}`);
-                    shoeImages.push(`http://localhost:3000/${brand}/${category}/${name}/${Image.name}`);
-                    console.log(`File ${Image.name} saved successfully to ${filePath}`);
-                } catch (error) {
-                    console.error(`Error saving ${Image.name}:`, error);
-                }
-            }
-            }
-        
-        await saveImages();
+        const shoeImages = await saveImages(brand, category, name, ImageData);
         
     
     

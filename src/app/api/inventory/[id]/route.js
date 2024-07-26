@@ -6,11 +6,12 @@ import fs from 'fs';
 import { pipeline } from 'stream';
 import { promisify } from 'util';
 import { Seller } from "@/models/User.model";
+import { saveImages } from "@/utils/utils";
 const pump = promisify(pipeline);
 
 dbConnect();
 
-// api/product/:id (GET)
+// api/inventory/:id (GET)
 export async function GET(request,context) {
     const isAuthenticated = await sellerAuth(request);
 
@@ -22,23 +23,28 @@ export async function GET(request,context) {
     return NextResponse.json({product}, { status: 200 });
 }
 
-// api/product/:id (PUT)
+// api/inventory/:id (PUT)
 export async function PUT(request,context) {
     const isAuthenticated = await sellerAuth(request);
 
     if (!isAuthenticated) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+    console.log("Yha pr hai");
 
     const { id } = context.params;
+    console.log("id", id);
 
     const curProduct = await Product.findById(id);
+    console.log("curProduct", curProduct);
     const seller = await Seller.findById(curProduct.seller);
     const curSeller = await Seller.findById(request.user._id);
 
     if (seller._id.toString() !== curSeller._id.toString()) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
+    console.log("Authorized");
 
     // Parse the form data
     const formData = await request.formData();
@@ -75,28 +81,9 @@ export async function PUT(request,context) {
     if (stockQuantity) updateData.stockQuantity = Number(stockQuantity);
 
     const ImageData = formData.getAll('shoeImages');
-    const shoeImages = []
-    async function saveImages() {
-        // check if brand dir exists
-        const product = await Product.findById(id);
-        const brand = product.brand
-        const brandDir = `./public/${brand}`;
-        if (!fs.existsSync(brandDir)) {
-            fs.mkdirSync(brandDir);
-        }
-    
-        for (const Image of ImageData) {
-            const filePath = `./public/${brand}/${Image.name}`;
-            try {
-                await pump(Image.stream(), fs.createWriteStream(filePath));
-                shoeImages.push(`http://localhost:3000/${Image.name}`);
-            } catch (error) {
-                console.error(`Error saving ${Image.name}:`, error);
-            }
-        }
-        }
-    
-    await saveImages();
+
+    const newImages = await saveImages(brand, category, name, ImageData);
+    updateData.shoeImages = [...curProduct.shoeImages, ...newImages]; 
     
 
     // Update the product
@@ -110,7 +97,7 @@ export async function PUT(request,context) {
 }
 
 
-// api/product/:id (DELETE)
+// api/inventory/:id (DELETE)
 export async function DELETE(request,context) {
     const isAuthenticated =  await sellerAuth(request);
 
@@ -137,7 +124,7 @@ export async function DELETE(request,context) {
 
     // delete images
     const brand = curProduct.brand
-    const brandDir = `./public/${brand}`;
+    const brandDir = `./public/${brand}/${curProduct.category}/${curProduct.name}`;
     if (fs.existsSync(brandDir)) {
         fs.rmSync(brandDir, { recursive: true });
     }
