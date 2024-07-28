@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import LogoutModal from './Modal/LogoutModal';
 
-export default function Navbar({ isAuthenticated, setIsCartOpen }) {
+export default function Navbar({ isAuthenticated, setIsCartOpen, setIsAuthenticated }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
@@ -45,7 +46,7 @@ export default function Navbar({ isAuthenticated, setIsCartOpen }) {
                     {isAuthenticated ? (
                         <>
                             <Link href="/account">Account</Link>
-                            <Link href="/logout">Logout</Link>
+                            <LogoutModal setIsAuthenticated={setIsAuthenticated} />
                         </>
                     ) : (
                         <>

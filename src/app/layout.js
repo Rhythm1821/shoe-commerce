@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
       {!noNavRoutes.includes(route) && (
-                type === 'seller' ? <SellerNavbar /> : <Navbar isAuthenticated={isAuthenticated} setIsCartOpen={setIsCartOpen} />
+                type === 'seller' ? <SellerNavbar /> : <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setIsCartOpen={setIsCartOpen} />
             )}
       {children}
       <Cart open={isCartOpen} setOpen={setIsCartOpen} />
