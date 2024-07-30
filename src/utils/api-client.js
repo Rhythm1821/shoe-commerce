@@ -1,4 +1,4 @@
-// import { cookies } from "next/headers"
+
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
 
@@ -15,8 +15,16 @@ export async function apiClient(endpoint, options = {}) {
     return response.json()
 }
 
+export async function refreshToken(){
+    const res = await fetch(`${API_BASE_URL}/api/refresh-token`, {
+        method: "GET",
+    });
+    return res
+}
 
 export async function fetchProducts() {
+    // refresh tokens
+    // await getValidToken()
     try {
         const res = await fetch(`${API_BASE_URL}/api/market`);
         const data = await res.json();
@@ -27,6 +35,7 @@ export async function fetchProducts() {
 }
 
 export async function fetchProductDetails(id) {
+    // await getValidToken()
     const res = await fetch(`${API_BASE_URL}/api/product-details/${id}`,{
         method: "GET",
     });
@@ -91,6 +100,20 @@ export async function addToCart(productId, quantity=1) {
         return res
     } catch (error) {
         alert("Failed to add product to cart", error);
+    }
+}
+
+export async function removeFromCart(id) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/cart`, {
+            method: "DELETE",
+            credentials: "include",
+            body: JSON.stringify({id}),
+        })
+
+        return res
+    } catch (error) {
+        console.log("Error while deleting product from cart", error);
     }
 }
 
