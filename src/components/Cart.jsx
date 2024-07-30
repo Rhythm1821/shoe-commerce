@@ -3,24 +3,39 @@
 import { useEffect, useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { fetchCart } from '@/utils/api-client'
+import { fetchCart, removeFromCart } from '@/utils/api-client'
 import Link from 'next/link'
 
 export default function Cart({open, setOpen}) {
     const [cart, setCart] = useState([]);
+    // const []
 
-    useEffect(()=>{
-        async function getCart() {
-            const res = await fetchCart();
-            const data = await res.json();
-            if (data.cart?.cartItems) {
-              setCart(data.cart?.cartItems)              
-            }
+    async function getCart() {
+        const res = await fetchCart();
+        const data = await res.json();
+        if (data.cart?.cartItems) {
+          setCart(data.cart?.cartItems)              
         }
+    }
+    useEffect(()=>{
 
         getCart()
 
     },[])
+
+    async function handleRemove(e,id){
+        e.preventDefault();
+        const res = await removeFromCart(id);
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.message);
+          return
+        }
+        // getCart();
+        setCart(cart.filter((item) => item._id !== id));
+        alert("Product removed successfully");
+        return data.message;
+    }
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -28,6 +43,7 @@ export default function Cart({open, setOpen}) {
         transition
         className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
       />
+      
 
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
@@ -91,7 +107,7 @@ export default function Cart({open, setOpen}) {
                                     <p className="text-gray-500">Qty {product.quantity}</p>
 
                                     <div className="flex">
-                                      <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500">
+                                      <button onClick={(e)=>handleRemove(e,product._id)} type="button" className="font-medium text-indigo-600 hover:text-indigo-500">
                                         Remove
                                       </button>
                                     </div>
@@ -111,7 +127,7 @@ export default function Cart({open, setOpen}) {
                     <div className="flex justify-between text-base font-medium text-gray-900">
                       <p>Subtotal</p>
                       <p>
-                        {cart.reduce((total, item) => total + item?.price * item.quantity, 0)}
+                        {cart.reduce((total, product) => total + product.product.price * product.quantity, 0)}
                       </p>
                     </div>
                     <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>

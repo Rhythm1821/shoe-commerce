@@ -42,7 +42,7 @@ export async function POST(request) {
     if (!cart) {
         const newCart = new Cart({
             buyer: request.user._id,
-            cartItems: [{product: productId, quantity, size: body.size}],            
+            cartItems: [{product: productId, quantity}],            //  size: body.size, color: body.color
         })
         await newCart.save();
         return NextResponse.json({message: "Cart created successfully"}, { status: 201 });
@@ -63,39 +63,34 @@ export async function POST(request) {
 
 }
 
-export async function PUT(request) {
+export async function DELETE(request){
 
-    // check if buyer exists
-    const isAuthenticated = await buyerAuth(request);
+    const isAuthenticated =  await buyerAuth(request);
 
     if (!isAuthenticated) {
-        return NextResponse.json({message: "Sign Up to add items to cart"}, { status: 401 })
+        return NextResponse.json({message: "Unauthorized"}, { status: 401 })
     }
 
-    // Get the query params id
-    const { productId, quantity } = await request.json();
-
-    // check if cart exists
-    const cart = await Cart.findOne({buyer: request.user._id});
-    if (!cart) {
-        return NextResponse.json({message: "Cart not found"}, { status: 404 });
-    }
-
-    // Update item from cart
-    const existingItemIndex = cart.cartItems.findIndex((item) => item.product.toString() === productId);
-    if (existingItemIndex > -1) {
-        // Product already exists in cart, update quantity
-        cart.cartItems[existingItemIndex].quantity += quantity
-        
-        if (cart.cartItems[existingItemIndex].quantity <= 0) {
-            cart.cartItems.splice(existingItemIndex, 1);
+    try {
+        const { id } = await request.json();
+        console.log("id", id);
+    
+        const cart = await Cart.findOne({buyer: request.user._id});
+        if (!cart) {
+            return NextResponse.json({message: "Cart not found"}, { status: 404 });
         }
-    } else {
-        // Product does not exist in cart
-        return NextResponse.json({message: "Product not found in cart"}, { status: 404 });
+    
+        // Delete item from cart
+        console.log("cart", cart);
+        const itemToDeleteIndex = cart.cartItems.findIndex((item) => item._id.toString() === id);
+        console.log("itemToDeleteIndex", itemToDeleteIndex);
+        if (itemToDeleteIndex > -1) {
+            cart.cartItems.splice(itemToDeleteIndex, 1);
+        }
+        await cart.save();
+        
+        return NextResponse.json({message: "Item deleted successfully"}, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({message: error.message}, { status: 500 });
     }
-
-    await cart.save();
-
-    return NextResponse.json({message: "Cart updated successfully"}, { status: 200 });
 }
