@@ -3,39 +3,67 @@
 import { useEffect, useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { fetchCart, removeFromCart } from '@/utils/api-client'
+import { fetchCart, removeFromCart, updateCart } from '@/utils/api-client'
 import Link from 'next/link'
 
-export default function Cart({open, setOpen}) {
-    const [cart, setCart] = useState([]);
-    // const []
+export default function Cart({ open, setOpen }) {
+  const [cart, setCart] = useState([]);
 
-    async function getCart() {
-        const res = await fetchCart();
-        const data = await res.json();
-        if (data.cart?.cartItems) {
-          setCart(data.cart?.cartItems)              
-        }
+  async function getCart() {
+    const res = await fetchCart();
+    const data = await res.json();
+    if (data.cart?.cartItems) {
+      setCart(data.cart?.cartItems);
     }
-    useEffect(()=>{
+  }
 
-        getCart()
+  useEffect(() => {
+    getCart();
+  }, []);
 
-    },[])
-
-    async function handleRemove(e,id){
-        e.preventDefault();
-        const res = await removeFromCart(id);
-        const data = await res.json();
-        if (!res.ok) {
-          alert(data.message);
-          return
-        }
-        // getCart();
-        setCart(cart.filter((item) => item._id !== id));
-        alert("Product removed successfully");
-        return data.message;
+  async function handleRemove(e, id) {
+    e.preventDefault();
+    const res = await removeFromCart(id);
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.message);
+      return;
     }
+    setCart(cart.filter((item) => item._id !== id));
+    alert("Product removed successfully");
+    return data.message;
+  }
+
+  const increaseQuantity = async (index) => {
+    const newCart = [...cart];
+    newCart[index].quantity += 1;
+    setCart(newCart);
+    const res = await updateCart(newCart[index]._id, newCart[index].quantity);
+    const data = res.json();
+    if (!res.ok) {
+      alert(data.message);
+      return;
+    }
+    alert("Cart updated successfully", data.message);
+    return data.message;
+  };
+
+  const decreaseQuantity = async (index) => {
+    const newCart = [...cart];
+    if (newCart[index].quantity > 1) {
+      newCart[index].quantity -= 1;
+      setCart(newCart);
+      const res = await updateCart(newCart[index]._id, newCart[index].quantity);
+      console.log("res", res);
+      const data = res.json();
+      if (!res.ok) {
+        alert(data.message);
+        return;
+      }
+      alert("Cart updated successfully", data.message);
+      return data.message;
+    }
+  };
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -43,7 +71,6 @@ export default function Cart({open, setOpen}) {
         transition
         className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
       />
-      
 
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
@@ -81,7 +108,7 @@ export default function Cart({open, setOpen}) {
                     ) : (
                       <div className="flow-root">
                         <ul role="list" className="-my-6 divide-y divide-gray-200">
-                          {cart.map((product) => (
+                          {cart.map((product, index) => (
                             <Link target='_blank' href={`/product/${product.product?._id}`} key={product._id}>
                               <li key={product._id} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -104,10 +131,34 @@ export default function Cart({open, setOpen}) {
                                     <p className="mt-1 text-sm text-gray-500">{product?.product?.color}</p>
                                   </div>
                                   <div className="flex flex-1 items-end justify-between text-sm">
-                                    <p className="text-gray-500">Qty {product.quantity}</p>
-
+                                    <div className="flex items-center space-x-4">
+                                      <button
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          decreaseQuantity(index);
+                                        }}
+                                        className="px-4 py-2 text-slate-500 border rounded hover:bg-slate-100 focus:outline-none"
+                                      >
+                                        -
+                                      </button>
+                                      <input
+                                        type="number"
+                                        className="w-12 text-center border border-gray-300 rounded"
+                                        value={product.quantity}
+                                        readOnly
+                                      />
+                                      <button
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          increaseQuantity(index);
+                                        }}
+                                        className="px-4 py-2 text-slate-500 border rounded hover:bg-slate-100 focus:outline-none"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
                                     <div className="flex">
-                                      <button onClick={(e)=>handleRemove(e,product._id)} type="button" className="font-medium text-indigo-600 hover:text-indigo-500">
+                                      <button onClick={(e) => handleRemove(e, product._id)} type="button" className="font-medium text-indigo-600 hover:text-indigo-500">
                                         Remove
                                       </button>
                                     </div>

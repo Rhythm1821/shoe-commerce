@@ -73,7 +73,6 @@ export async function DELETE(request){
 
     try {
         const { id } = await request.json();
-        console.log("id", id);
     
         const cart = await Cart.findOne({buyer: request.user._id});
         if (!cart) {
@@ -81,9 +80,7 @@ export async function DELETE(request){
         }
     
         // Delete item from cart
-        console.log("cart", cart);
         const itemToDeleteIndex = cart.cartItems.findIndex((item) => item._id.toString() === id);
-        console.log("itemToDeleteIndex", itemToDeleteIndex);
         if (itemToDeleteIndex > -1) {
             cart.cartItems.splice(itemToDeleteIndex, 1);
         }
@@ -93,4 +90,28 @@ export async function DELETE(request){
     } catch (error) {
         return NextResponse.json({message: error.message}, { status: 500 });
     }
+}
+
+export async function PUT(request){
+    const isAuthenticated = await buyerAuth(request)
+    const { id, quantity } = await request.json()
+
+    if (!isAuthenticated) {
+        return NextResponse.json({message: 'Unauthorized'},{status:401})
+    }
+
+    const cart = await Cart.findOne({buyer: request.user._id})
+
+    if (!cart) {
+        return NextResponse.json({message: "Cart not found"})
+    }
+
+    const itemQuantityUpdate = cart.cartItems.findIndex((item)=>item._id.toString()===id)
+    if (itemQuantityUpdate>-1) {
+        cart.cartItems[itemQuantityUpdate].quantity=quantity
+        await cart.save()
+        return NextResponse.json({message:'Cart updated successfully'}, {status:200})
+    }
+
+    return NextResponse.json({message:'Item not found in cart'}, {status:404})
 }

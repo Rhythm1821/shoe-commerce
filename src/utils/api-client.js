@@ -117,6 +117,20 @@ export async function removeFromCart(id) {
     }
 }
 
+export async function updateCart(id, quantity) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/cart`, {
+            method: "PUT",
+            credentials: "include",
+            body: JSON.stringify({id, quantity}),
+        })
+
+        return res
+    } catch (error) {
+        console.log("Error while updating cart", error);
+    }
+}
+
 export async function fetchLogout() {
     try {
         const res = await fetch(`${API_BASE_URL}/api/users/logout`,
