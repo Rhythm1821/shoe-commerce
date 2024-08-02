@@ -1,3 +1,4 @@
+import { toast } from "react-hot-toast"
 
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
@@ -30,7 +31,7 @@ export async function fetchProducts() {
         const data = await res.json();
         return data.products
     } catch (error) {
-        alert("Failed to fetch products", error);
+        toast.error("Failed to fetch products", error);
     }
 }
 
@@ -55,7 +56,7 @@ export async function postRegisterDetails(data, type) {
 
         return res
     } catch (error) {
-        alert("Error while posting register details", error);
+        toast.error("Error while posting register details", error);
     }
 }
 
@@ -83,7 +84,7 @@ export async function fetchCart() {
         });
         return res
     } catch (error) {
-        alert("Failed to fetch cart", error);
+        toast.error("Failed to fetch cart", error);
     }
 }
 
@@ -99,7 +100,7 @@ export async function addToCart(productId, quantity=1) {
         })
         return res
     } catch (error) {
-        alert("Failed to add product to cart", error);
+        toast.error("Failed to add product to cart", error);
     }
 }
 
@@ -145,7 +146,7 @@ export async function fetchLogout() {
         const data = await res.json();
         return data
     } catch (error) {
-        alert("Failed to logout", error);
+        toast.error("Failed to logout", error);
     }
 }
 
@@ -172,7 +173,7 @@ export async function addToInventory(data) {
     
         return res
     } catch (error) {
-        alert("Error while adding product to inventory", error);
+        toast.error("Error while adding product to inventory", error);
     }
 }
 
