@@ -4,6 +4,7 @@ import { addToInventory, deleteProductFromInventory, fetchInventory, updateInven
 import { useEffect, useRef, useState } from "react";
 
 import ProductInventoryModal from "@/components/Modal/Inventory/Product";
+import { toast } from "react-hot-toast";
 
 export default function Inventory() {
     const [inventory, setInventory] = useState([]);
@@ -46,7 +47,7 @@ export default function Inventory() {
             const res = await addToInventory(formData);
             const { message } = await res.json();
             if (res.status === 201) {
-                console.log(message);
+                toast.success(message);
                 try {
                     const updatedInventory = await fetchInventory();
                     const data = await updatedInventory.json();
@@ -76,14 +77,14 @@ export default function Inventory() {
                 }
                 return message;
             } else {
-                console.error(message);
+                toast.error(message);
             }
         } 
         else if (modalOperation === "edit") {
             const res = await updateInventory(productId, formData);
             const { message } = await res.json();
             if (res.status === 200) {
-                console.log(message);
+                toast.success(message);
                 try {
                     const updatedInventory = await fetchInventory();
                     const data = await updatedInventory.json();
@@ -113,7 +114,7 @@ export default function Inventory() {
                 }
                 return message;
             } else {
-                console.error(message);
+                toast.error(message);
             }
         }
     };
@@ -132,10 +133,9 @@ export default function Inventory() {
             }
             console.log("deleted", data);
             setInventory(inventory.filter((product) => product._id !== id));
-            alert("Product deleted successfully");
-            return data.message;
+            toast.success("Product deleted successfully");
         } catch (error) {
-            console.log("error deleting", error);
+            toast.error(error);
         }
     }
 
@@ -188,7 +188,8 @@ export default function Inventory() {
     };
 
     if (error) {
-        return <p>{error}</p>;
+        toast.error(error);
+        setError(null);
     }
 
     const truncateDescription = (description, limit) => {

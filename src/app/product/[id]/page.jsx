@@ -9,6 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { toast } from "react-hot-toast";
 
 export default function ProductPage({ params }) {
   const { id } = params;
@@ -26,11 +27,13 @@ export default function ProductPage({ params }) {
     try {
       const res = await addToCart(productId, quantity);
       const {message} = await res.json();
-      if (res.status === 200) {
-        return alert(message);
+      if (res.ok) {
+        toast.success(message);
+      } else {
+        toast.error(message);
       }
     } catch (error) {
-      return alert(error.message);
+      toast.error(error);
     }
   };
 
