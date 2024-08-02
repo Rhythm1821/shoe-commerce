@@ -4,6 +4,8 @@ import { Label } from '@/components/ui/label';
 import { postLoginDetails } from '@/utils/api-client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
+
 
 const LoginForm = ({type}) => {
   const router = useRouter()
@@ -17,14 +19,14 @@ const LoginForm = ({type}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await postLoginDetails(formData, type);
-    const message = await response.json();
+    const data = await response.json();
 
     if (response.status === 200) {
-      console.log(message);
+      toast.success(data.message);
       router.push('/')
-      return message;
+      return
     } else {
-      console.error(message);
+      toast.error(data.message);
     }
   };
 

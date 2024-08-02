@@ -11,6 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { toast } from "react-hot-toast";
 
 
 export default function Card({ product }) {
@@ -23,10 +24,12 @@ export default function Card({ product }) {
       const res = await addToCart(productId, quantity);
       const {message} = await res.json();
       if (res.status === 200) {
-        return alert(message);
+        toast.success(message);
+      } else {
+        toast.error(message);
       }
     } catch (error) {
-      return alert(error.message);
+      console.log(error.message);
     }
   };
 
@@ -94,7 +97,7 @@ export default function Card({ product }) {
             Add to Cart
           </Button>
         </div>
-        <button onClick={(e) => {handleAddToCart(e,product._id, 1)}} className="w-full bg-orange-500 text-white py-2 px-4 rounded-xl hover:bg-orange-600 transition-colors duration-200">
+        <button className="w-full bg-orange-500 text-white py-2 px-4 rounded-xl hover:bg-orange-600 transition-colors duration-200">
           Buy Now
         </button>
     </div>

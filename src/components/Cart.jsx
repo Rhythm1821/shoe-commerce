@@ -5,6 +5,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { fetchCart, removeFromCart, updateCart } from '@/utils/api-client'
 import Link from 'next/link'
+import { toast } from 'react-hot-toast'
 
 export default function Cart({ open, setOpen }) {
   const [cart, setCart] = useState([]);
@@ -26,11 +27,11 @@ export default function Cart({ open, setOpen }) {
     const res = await removeFromCart(id);
     const data = await res.json();
     if (!res.ok) {
-      alert(data.message);
+      toast.error(data.message);
       return;
     }
     setCart(cart.filter((item) => item._id !== id));
-    alert("Product removed successfully");
+    toast.success("Product removed successfully");
     return data.message;
   }
 
@@ -41,10 +42,10 @@ export default function Cart({ open, setOpen }) {
     const res = await updateCart(newCart[index]._id, newCart[index].quantity);
     const data = res.json();
     if (!res.ok) {
-      alert(data.message);
+      toast.error(data.message);
       return;
     }
-    alert("Cart updated successfully", data.message);
+    toast.success("Cart updated successfully", data.message);
     return data.message;
   };
 
@@ -57,11 +58,10 @@ export default function Cart({ open, setOpen }) {
       console.log("res", res);
       const data = res.json();
       if (!res.ok) {
-        alert(data.message);
+        toast.error(data.message);
         return;
       }
-      alert("Cart updated successfully", data.message);
-      return data.message;
+      toast.success("Cart updated successfully", data.message);
     }
   };
 
@@ -137,13 +137,13 @@ export default function Cart({ open, setOpen }) {
                                           e.preventDefault();
                                           decreaseQuantity(index);
                                         }}
-                                        className="px-4 py-2 text-slate-500 border rounded hover:bg-slate-100 focus:outline-none"
+                                        className="px-2 py-1 text-slate-500 border rounded hover:bg-slate-100 focus:outline-none"
                                       >
                                         -
                                       </button>
                                       <input
                                         type="number"
-                                        className="w-12 text-center border border-gray-300 rounded"
+                                        className="w-10 text-center border border-gray-300 rounded"
                                         value={product.quantity}
                                         readOnly
                                       />
@@ -152,7 +152,7 @@ export default function Cart({ open, setOpen }) {
                                           e.preventDefault();
                                           increaseQuantity(index);
                                         }}
-                                        className="px-4 py-2 text-slate-500 border rounded hover:bg-slate-100 focus:outline-none"
+                                        className="px-2 py-1 text-slate-500 border rounded hover:bg-slate-100 focus:outline-none"
                                       >
                                         +
                                       </button>

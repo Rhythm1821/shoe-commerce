@@ -40,7 +40,6 @@ export default function Navbar({ isAuthenticated, setIsCartOpen, setIsAuthentica
                     </button>
                 </div>
                 <div className={`flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0 mt-4 md:mt-0 ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
-                    {/* <Link href="/cart">Cart</Link> */}
                     <button onClick={() => setIsCartOpen(true)}>Cart</button>
                     <Link href="/seller/home">Become a seller</Link>
                     {isAuthenticated ? (
