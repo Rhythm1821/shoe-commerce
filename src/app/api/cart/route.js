@@ -88,7 +88,7 @@ export async function DELETE(request){
         
         return NextResponse.json({message: "Item deleted successfully"}, { status: 200 });
     } catch (error) {
-        return NextResponse.json({message: error.message}, { status: 500 });
+        return NextResponse.json({message: error}, { status: 500 });
     }
 }
 

@@ -21,13 +21,13 @@ export async function POST(request) {
         const user = await User.findOne({email})
     
         if (!user) {
-            return NextResponse.json({error: "User not found"}, { status: 404 });
+            return NextResponse.json({message: "User not found"}, { status: 404 });
         }
     
         const validPassword = await bcrypt.compare(password, user.password);
     
         if (!validPassword) {
-            return NextResponse.json({error: "Invalid password"}, { status: 401 });
+            return NextResponse.json({message: "Invalid password"}, { status: 401 });
         }
     
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user);
@@ -44,7 +44,7 @@ export async function POST(request) {
         
         return response
     } catch (error) {
-        return NextResponse.json({error: error.message}, { status: 500 });
+        return NextResponse.json({message: error}, { status: 500 });
     }
 
 }

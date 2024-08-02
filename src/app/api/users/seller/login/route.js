@@ -22,13 +22,13 @@ export async function POST(request) {
         const seller = await Seller.findOne({email})
     
         if (!seller) {
-            return NextResponse.json({error: "Account not found"}, { status: 404 });
+            return NextResponse.json({message: "Account not found"}, { status: 404 });
         }
     
         const validPassword = await bcrypt.compare(password, seller.password);
     
         if (!validPassword) {
-            return NextResponse.json({error: "Invalid password"}, { status: 401 });
+            return NextResponse.json({message: "Invalid password"}, { status: 401 });
         }
     
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(seller);
@@ -46,7 +46,7 @@ export async function POST(request) {
         return response
     
     } catch (error) {
-        return NextResponse.json({error: error.message}, { status: 500 });
+        return NextResponse.json({message: error}, { status: 500 });
     }
 
 }
