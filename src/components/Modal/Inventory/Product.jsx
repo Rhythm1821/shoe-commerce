@@ -2,6 +2,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { Button } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function ProductInventoryModal({ isOpen, closeModal, inventoryData, setInventoryData, category, setCategory, modalOperation, handleSubmit, images, setImages, fileInputRef, handleChange, productId }) {
     const router = useRouter()
@@ -176,7 +177,7 @@ export default function ProductInventoryModal({ isOpen, closeModal, inventoryDat
 
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                         {images.slice(0, 2).map((image, index) => (
-                                            <img width={120} key={index} height={100} src={image} alt="" style={{ marginRight: '8px' }} />
+                                            <Image width={120} key={index} height={100} src={image} alt="" style={{ marginRight: '8px' }} />
                                         ))}
                                         {images.length > 2 && (
                                             <button target='_blank' onClick={handleMoreClick} style={{ cursor: 'pointer', color: 'blue', textDecoration: 'none' }}>

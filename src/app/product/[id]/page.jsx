@@ -10,6 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export default function ProductPage({ params }) {
   const { id } = params;
@@ -53,7 +54,7 @@ export default function ProductPage({ params }) {
             <CarouselContent>
               {product.shoeImages.map((image, index) => (
                 <CarouselItem key={index}>
-                    <img
+                    <Image
                       src={image}
                       alt={product.name}
                       className="w-full h-full object-cover"

@@ -6,6 +6,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { fetchCart, removeFromCart, updateCart } from '@/utils/api-client'
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
+import Image from 'next/image'
 
 export default function Cart({ open, setOpen }) {
   const [cart, setCart] = useState([]);
@@ -112,7 +113,7 @@ export default function Cart({ open, setOpen }) {
                             <Link target='_blank' href={`/product/${product.product?._id}`} key={product._id}>
                               <li key={product._id} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                  <img
+                                  <Image
                                     alt={product.imageAlt}
                                     src={product.product?.shoeImages[0]}
                                     className="h-full w-full object-cover object-center rounded-xl"
