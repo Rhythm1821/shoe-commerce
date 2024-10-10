@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { isAuthenticatedAndType } from "@/utils/api-client";
 import Cart from "@/components/Cart";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }) {
             )}
       {children}
       <Cart open={isCartOpen} setOpen={setIsCartOpen} />
+      <Toaster />
       </body>
     </html>
   );

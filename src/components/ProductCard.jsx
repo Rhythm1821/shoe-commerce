@@ -12,6 +12,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 
 export default function Card({ product }) {
@@ -43,7 +44,7 @@ export default function Card({ product }) {
               {product.shoeImages.map((image, index) => (
                 <CarouselItem key={index}>
                   <Link target="_blank" href={`/product/${product._id}`}>
-                    <img
+                    <Image
                       src={image}
                       alt={product.name}
                       className="w-full h-full object-cover"
